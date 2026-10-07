@@ -1,0 +1,46 @@
+Chest X-Ray Abnormality Detection - model evaluation
+====================================================
+EDUCATIONAL / RESEARCH USE ONLY - NOT A MEDICAL DIAGNOSIS.
+
+Trained on : 2026-10-07 03:30:27
+Environment: GNU Octave 8.4.0
+Images     : 216 train, 54 test (stratified 80/20 split, seed 42), 0 skipped
+Classifier : SVM, rbf kernel, BoxConstraint = 100, KernelScale = 1.803
+Features   : Mean, Std, Variance, Min, Max, Entropy, Skewness, Kurtosis, Contrast, Correlation, Energy, Homogeneity, LungAreaRatio
+
+HELD-OUT TEST SET (54 images)
+  Accuracy    :  74.07 %
+  Precision   :  72.41 %
+  Sensitivity :  77.78 %
+  Specificity :  70.37 %
+  F1-score    :  75.00 %
+  Balanced acc:  74.07 %
+  ROC AUC     :  0.798
+  Confusion matrix (rows = true, columns = predicted):
+                     Normal   Abnormal
+    Normal               19          8
+    Abnormal              6         21
+  TP = 21, TN = 19, FP = 8, FN = 6
+
+5-FOLD CROSS-VALIDATION ON TRAINING SET (216 images)
+  Accuracy    :  69.44 %
+  Precision   :  69.81 %
+  Sensitivity :  68.52 %
+  Specificity :  70.37 %
+  F1-score    :  69.16 %
+  Balanced acc:  69.44 %
+  ROC AUC     :  0.729
+  Confusion matrix (rows = true, columns = predicted):
+                     Normal   Abnormal
+    Normal               76         32
+    Abnormal             34         74
+  TP = 74, TN = 76, FP = 32, FN = 34
+
+Metric definitions (positive class = Abnormal)
+  Accuracy    : overall percentage of correct predictions.
+  Precision   : percentage of predicted-Abnormal images that are truly Abnormal.
+  Sensitivity : (recall) ability to correctly identify abnormal cases, TP/(TP+FN).
+  Specificity : ability to correctly identify normal cases, TN/(TN+FP).
+  F1-score    : harmonic mean (balance) of precision and recall.
+  ROC AUC     : probability that a random Abnormal image gets a higher
+                score than a random Normal image (0.5 = chance).

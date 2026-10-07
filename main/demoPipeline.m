@@ -1,9 +1,11 @@
-function demoPipeline(imagePaths, outputDir)
+function demoPipeline(imagePaths, outputDir, model)
 %DEMOPIPELINE Run the whole pipeline on X-ray(s) and save explanatory figures.
 %   demoPipeline() picks one Normal and one Abnormal image from the held-out
 %   TEST set (results/test_predictions.csv, written by trainModel) so the
 %   shown predictions are on images the model never saw during training.
 %   demoPipeline({'a.png','b.jpg'}) processes the given files instead.
+%   demoPipeline(paths, outputDir, model) uses an in-memory model (e.g. the
+%   one returned by trainModel) instead of loading models/trainedModel.mat.
 %
 %   For every image, <outputDir>/<name>_*.png figures are written:
 %     _pipeline.png    original, grayscale, denoised, enhanced, gamma, masks, overlay
@@ -26,12 +28,16 @@ if exist(outputDir, 'dir') ~= 7
 end
 
 cfg = getConfig();
-try
-    model = loadTrainedModel();
+if nargin < 3 || isempty(model)
+    try
+        model = loadTrainedModel();
+    catch modelError
+        model = [];
+        fprintf('%s\nFigures will be produced without a prediction.\n', modelError.message);
+    end
+end
+if ~isempty(model)
     cfg = model.cfg;
-catch modelError
-    model = [];
-    fprintf('%s\nFigures will be produced without a prediction.\n', modelError.message);
 end
 
 for k = 1:numel(imagePaths)

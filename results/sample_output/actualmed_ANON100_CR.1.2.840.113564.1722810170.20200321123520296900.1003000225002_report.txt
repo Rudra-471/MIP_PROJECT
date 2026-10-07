@@ -1,0 +1,23 @@
+Image: actualmed_ANON100_CR.1.2.840.113564.1722810170.20200321123520296900.1003000225002.png
+Segmentation: 2 region(s), lung area 13.7% of image, adaptive sensitivity 0.60
+
+Features
+  Mean               0.3730
+  Std                0.0959
+  Variance           0.0092
+  Min                0.1648
+  Max                0.7356
+  Entropy            6.5798
+  Skewness           0.4399
+  Kurtosis           2.5631
+  Contrast           0.5406
+  Correlation        0.9416
+  Energy             0.0596
+  Homogeneity        0.8180
+  LungAreaRatio      0.1374
+
+Model prediction : Predicted Normal
+P(Abnormal)      : 33.5% (Platt-calibrated SVM score)
+SVM score        : -1.142
+
+This system is intended for educational and research purposes only and does not provide a medical diagnosis. Results should not be used for clinical decision-making.

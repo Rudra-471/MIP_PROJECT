@@ -185,8 +185,9 @@ demoPipeline('path/to/any_xray.png')  % any image
 ```
 
 > **The trained model is not committed to the repository.** A model trained in
-> MATLAB must be produced by running `trainModel` (≈5–15 minutes for 270
-> images, mostly reading the large PNG files). See section 12 for the reference
+> MATLAB must be produced by running `trainModel` (feature extraction for the
+> 270 images took ≈5 minutes in the Octave test run; most of it is reading the
+> large PNG files). See section 12 for the reference
 > results obtained when this exact pipeline was executed.
 
 ## 7. How to run the GUI
@@ -364,11 +365,95 @@ Positive class = **Abnormal**.
 | F1-score | 2·P·R/(P+R) | balance between precision and recall |
 | ROC AUC | rank statistic | probability that an abnormal image scores higher than a normal one |
 
-RESULTS_PLACEHOLDER
+### Reference results (actually obtained – read the caveats)
+
+The full pipeline was executed end-to-end on the 270 real images of the
+reference dataset (section 4). **These runs were performed with GNU Octave 8.4
++ statistics 1.7.0, not MATLAB** (no MATLAB licence was available in the build
+environment). Octave lacks a few Image Processing Toolbox functions, which were
+replaced by test-only re-implementations (`tests/octave_compat/`, e.g. CLAHE,
+`adaptthresh`, GLCM). Octave's random-number stream also differs from MATLAB's,
+so the train/test split differs. **When you run `trainModel` in MATLAB your
+numbers will differ** – `results/metrics.txt` is then overwritten with the
+MATLAB results. No MATLAB `trainedModel.mat` is shipped: **the model still has
+to be trained in MATLAB** (one command, section 6).
+
+**Main experiment** – 270 images (135 Normal / 135 Abnormal, one per patient),
+stratified 80/20 split → 216 train / 54 test. Selected hyper-parameters:
+BoxConstraint = 100, KernelScale = 1.80. Feature extraction succeeded for 270/270
+images.
+
+| Metric (Abnormal = positive) | Held-out test set (n = 54) | 5-fold CV on training set (n = 216) |
+|---|---|---|
+| Accuracy | **74.1 %** | 69.4 % |
+| Precision | 72.4 % | 69.8 % |
+| Sensitivity / recall | 77.8 % | 68.5 % |
+| Specificity | 70.4 % | 70.4 % |
+| F1-score | 75.0 % | 69.2 % |
+| ROC AUC | 0.798 | 0.729 |
+
+Test confusion matrix (`results/confusion_matrix.png`):
+
+| | Predicted Normal | Predicted Abnormal |
+|---|---|---|
+| **True Normal** (27) | 19 (TN) | 8 (FP) |
+| **True Abnormal** (27) | 6 (FN) | 21 (TP) |
+
+**Source-controlled check (important).** In the reference dataset most Normal
+images come from one hospital (Actualmed) while most Abnormal images come from
+the literature-based ieee8023 collection, so a classifier can partly learn *which
+source* an image comes from instead of the disease. To measure this, the same
+code was trained/tested on the Actualmed images only (120 Normal / 51 Abnormal,
+same hospital for both classes; `results/source_controlled_actualmed_only/`):
+
+| Metric | Held-out test (n = 34: 24 Normal / 10 Abnormal) |
+|---|---|
+| Accuracy | 73.5 % (mostly from predicting "Normal") |
+| Sensitivity | **20.0 %** (2 / 10) |
+| Specificity | 95.8 % (23 / 24) |
+| Balanced accuracy | 57.9 % (CV on training set: 58.9 %) |
+| ROC AUC | 0.812 (small test set – very uncertain) |
+
+**Interpretation:** hand-crafted global intensity/texture features of an
+approximate lung mask carry only a weak signal for COVID-19/pneumonia. Part of
+the 74 % on the mixed dataset is very likely due to differences between the two
+data sources. With 54 (or 34) test images the uncertainty of every metric is
+also large (roughly ±12 percentage points for the accuracy). This is expected for
+a classical-features educational project and is reported here as measured.
+
+Sample outputs (`results/sample_output/`, produced by `demoPipeline` on two
+**test-set** images): `*_pipeline.png` (original → grayscale → denoised → CLAHE
+→ gamma → threshold mask → morphology → overlay), `*_histograms.png` (histograms
+and comparison of the enhancement methods), `*_morphology.png` (every
+morphological stage) and `*_report.txt` (feature values + prediction). Note that
+the Abnormal example (`actualmed_ANON100_...`) is **misclassified** by the model
+as *Predicted Normal* (P(Abnormal) = 33.5 %) – one of the 6 false negatives.
+
+All per-image test predictions are in `results/test_predictions.csv`, the
+hyper-parameter search in `results/cv_grid.csv`.
 
 ## 13. Limitations
 
-LIMITATIONS_PLACEHOLDER
+* **Not a diagnostic tool.** Educational project; no clinical validation.
+* **Weak, partly source-confounded signal** – see the source-controlled check in
+  section 12: on single-hospital data the sensitivity was only 20 %.
+* **Small dataset** (270 images, 54 test images) → wide confidence intervals;
+  the single hold-out split is one random draw.
+* **Approximate segmentation.** Classical thresholding under-segments lungs that
+  are very dense (large consolidations, effusions) and can miss the lung
+  periphery or retro-cardiac regions; it can fail on lateral views, children,
+  heavily rotated or inverted (MONOCHROME1) images. Failures are reported, not
+  hidden.
+* **Global features only** – means/texture over the whole lung lose the location
+  of focal lesions; there is no lesion detection or localisation.
+* Images are resized to 512×512 without preserving the aspect ratio.
+* "Abnormal" mixes many findings (COVID-19, bacterial/viral pneumonia, TB, …);
+  only a binary Normal/Abnormal decision is made.
+* The GUI (`ChestXrayApp.m`) is written against the documented App Designer API
+  and was syntax-checked, but **it could not be executed in the build
+  environment** (no MATLAB). All functions it calls were executed and tested.
+* Reference numbers were produced with GNU Octave + compatibility shims, not
+  MATLAB (see section 12).
 
 ## 14. Medical disclaimer
 
@@ -432,4 +517,6 @@ morphology radii, GLCM settings, SVM grid, split, seed) live in
 * `tests/runOctaveValidation.m` – runs `trainModel` + `demoPipeline` in GNU
   Octave (see `tests/octave_compat/README.md`).
 
-TESTING_PLACEHOLDER
+Last run (GNU Octave 8.4, `xvfb-run octave --no-gui tests/runOctaveValidation.m`):
+feature extraction 270/270 images, training and evaluation as reported in
+section 12, `demoPipeline` figures, and **31 / 31 tests passed**.

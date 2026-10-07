@@ -16,7 +16,14 @@ if size(featureMatrix, 2) ~= numel(model.featureNames)
         numel(model.featureNames), size(featureMatrix, 2));
 end
 Z = (featureMatrix - repmat(model.mu, numSamples, 1)) ./ repmat(model.sigma, numSamples, 1);
-[~, scores] = predict(model.svm, Z);
+if numSamples == 1 && isOctaveRuntime()
+    % Octave statistics 1.7.0 crashes in predict() for a single row (test
+    % runs only); predicting a duplicated row gives the same score.
+    [~, scores] = predict(model.svm, [Z; Z]);
+    scores = scores(1, :);
+else
+    [~, scores] = predict(model.svm, Z);
+end
 svmScore = scores(:, strcmp(cellstr(model.svm.ClassNames), model.positiveClass));
 
 probAbnormal = 1 ./ (1 + exp(model.plattA * svmScore + model.plattB));
