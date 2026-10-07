@@ -1,0 +1,271 @@
+class,source,patient_id,source_file,finding,view,license
+Normal,actualmed,ANON1,images/CR.1.2.840.113564.192168196.2020031914434008949.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON10,images/DX.1.2.840.113564.1722810162.20200404194854145480.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON104,images/DX.1.2.840.113564.1722810162.20200417024634079600.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON105,images/DX.1.2.840.113564.1722810162.20200406082745416370.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON109,images/DX.1.2.840.113564.1722810162.202003212127446125.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON11,images/DX.1.2.840.113564.1722810162.20200330155549529100.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON113,images/DX.1.2.840.113564.1722810162.20200410175512031420.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON115,images/DX.1.2.840.113564.1722810162.20200417214150749290.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON118,images/DX.1.2.840.113564.1722810162.20200419111851705930.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON12,images/DX.1.2.840.113564.1722810162.20200414101717389720.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON120,images/DX.1.2.840.113564.1722810162.20200325235118699920.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON121,images/CR.1.2.840.113564.192168196.2020033016123149069.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON122,images/DX.1.2.840.113564.1722810162.202004171314057425.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON124,images/DX.1.2.840.113564.1722810162.20200410122807096300.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON125,images/DX.1.2.840.113564.1722810162.20200325160609990420.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON128,images/DX.1.2.840.113564.1722810162.20200325035519587850.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON129,images/DX.1.2.840.113564.1722810162.20200416083007099140.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON13,images/DX.1.2.840.113564.1722810162.20200330142125620570.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON130,images/DX.1.2.840.113564.1722810162.20200416130101712300.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON131,images/DX.1.2.840.113564.1722810162.202004031554257618.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON134,images/CR.1.2.840.113564.192168196.2020032712415994976.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON137,images/DX.1.2.840.113564.1722810162.20200327135950280950.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON140,images/DX.1.2.840.113564.1722810162.20200409131002213950.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON141,images/DX.1.2.840.113564.1722810162.20200324173135171450.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON143,images/DX.1.2.840.113564.1722810162.20200403095438767300.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON145,images/DX.1.2.840.113564.1722810162.20200322143316916570.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON146,images/DX.1.2.840.113564.1722810162.20200413144300534160.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON148,images/DX.1.2.840.113564.1722810162.20200420124516732440.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON149,images/DX.1.2.840.113564.1722810162.20200417105359936840.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON15,images/DX.1.2.840.113564.1722810162.20200417170403543170.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON151,images/DX.1.2.840.113564.1722810162.20200417110000959900.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON152,images/DX.1.2.840.113564.1722810162.20200417111010040980.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON154,images/DX.1.2.840.113564.1722810162.20200418123953240490.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON155,images/CR.1.2.840.113564.192168196.2020040117583329780.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON156,images/DX.1.2.840.113564.1722810162.20200324090442116980.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON161,images/DX.1.2.840.113564.1722810162.20200416191632203540.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON162,images/DX.1.2.840.113564.1722810162.20200320114116138220.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON163,images/DX.1.2.840.113564.1722810162.20200331093347514180.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON165,images/DX.1.2.840.113564.1722810162.20200407154351156930.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON166,images/DX.1.2.840.113564.1722810162.20200330101715842390.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON167,images/CR.1.2.840.113564.192168196.2020031913094890017.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON168,images/DX.1.2.840.113564.1722810162.20200402222138430240.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON17,images/DX.1.2.840.113564.1722810162.20200324163640450390.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON171,images/DX.1.2.840.113564.1722810162.20200330115928823450.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON173,images/DX.1.2.840.113564.1722810162.20200323104202808100.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON175,images/CR.1.2.840.113564.192168196.2020040610405214785.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON178,images/CR.1.2.840.113564.192168196.2020040708262888222.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON179,images/DX.1.2.840.113564.1722810162.20200321114314263800.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON18,images/DX.1.2.840.113564.1722810162.20200404210401196600.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON180,images/DX.1.2.840.113564.1722810162.20200417201319616230.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON182,images/DX.1.2.840.113564.1722810162.20200327130648390830.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON183,images/DX.1.2.840.113564.1722810162.20200403103712240360.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON185,images/DX.1.2.840.113564.1722810162.20200417134736990110.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON186,images/DX.1.2.840.113564.1722810162.202003271502385806.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON187,images/DX.1.2.840.113564.1722810162.20200420150441592700.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON190,images/DX.1.2.840.113564.1722810162.20200409100734996750.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON191,images/CR.1.2.840.113564.192168196.2020031913311637123.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON192,images/DX.1.2.840.113564.1722810162.20200420140206725640.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON193,images/CR.1.2.840.113564.1722810170.20200418154808640220.1003000225002.png,No finding,AP,research use only (see repository README)
+Normal,actualmed,ANON194,images/DX.1.2.840.113564.1722810162.20200407205007081240.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON198,images/DX.1.2.840.113564.1722810162.20200331235358718640.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON2,images/DX.1.2.840.113564.1722810162.20200328190915750960.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON20,images/DX.1.2.840.113564.1722810162.20200413163143169320.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON205,images/DX.1.2.840.113564.1722810162.202004141559081673.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON206,images/DX.1.2.840.113564.1722810162.20200403113227763540.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON207,images/DX.1.2.840.113564.1722810162.20200321204028829980.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON208,images/DX.1.2.840.113564.1722810162.20200414192734848390.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON21,images/DX.1.2.840.113564.1722810162.20200416135234642360.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON211,images/CR.1.2.840.113564.192168196.2020033115253391026.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON213,images/DX.1.2.840.113564.1722810162.20200320175830093580.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON216,images/DX.1.2.840.113564.1722810162.20200321192719071860.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON219,images/CR.1.2.840.113564.192168196.2020041316410681120.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON22,images/CR.1.2.840.113564.192168196.2020032413222814777.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON221,images/DX.1.2.840.113564.1722810162.20200406152138599630.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON224,images/CR.1.2.840.113564.192168196.2020031914133530635.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON228,images/DX.1.2.840.113564.1722810162.20200417102240621720.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON229,images/DX.1.2.840.113564.1722810162.20200325180923403640.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON233,images/DX.1.2.840.113564.1722810162.20200420123349689300.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON235,images/CR.1.2.840.113564.1722810170.20200403010103781780.1003000225002.png,No finding,AP,research use only (see repository README)
+Normal,actualmed,ANON238,images/DX.1.2.840.113564.1722810162.20200407095712184770.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON239,images/CR.1.2.840.113564.1722810170.202003241816485934.1003000225002.png,No finding,AP,research use only (see repository README)
+Normal,actualmed,ANON242,images/DX.1.2.840.113564.1722810162.20200405000323941660.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON243,images/DX.1.2.840.113564.1722810162.20200324140423562310.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON245,images/CR.1.2.840.113564.1722810170.20200323115834968210.1003000225002.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON28,images/DX.1.2.840.113564.1722810162.20200403173403510160.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON33,images/DX.1.2.840.113564.1722810162.20200420155936364760.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON35,images/DX.1.2.840.113564.1722810162.20200331165352707460.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON37,images/DX.1.2.840.113564.1722810162.20200414150507492960.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON40,images/CR.1.2.840.113564.192168196.2020040314541260251.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON41,images/DX.1.2.840.113564.1722810162.20200420164750991860.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON43,images/DX.1.2.840.113564.1722810162.20200408152416905270.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON48,images/DX.1.2.840.113564.1722810162.20200321085646975740.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON49,images/DX.1.2.840.113564.1722810162.20200320150341771440.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON5,images/DX.1.2.840.113564.1722810162.20200324173713500510.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON51,images/DX.1.2.840.113564.1722810162.20200416190453105480.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON52,images/DX.1.2.840.113564.1722810162.20200325180041010540.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON54,images/DX.1.2.840.113564.1722810162.20200325130434611240.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON55,images/DX.1.2.840.113564.1722810162.20200320155115417540.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON56,images/CR.1.2.840.113564.1722810170.20200317090830828260.1003000225002.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON58,images/CR.1.2.840.113564.1722810170.20200401171818781600.1003000225002.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON59,images/DX.1.2.840.113564.1722810162.20200404203720370540.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON6,images/DX.1.2.840.113564.1722810162.20200327135133580890.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON60,images/DX.1.2.840.113564.1722810162.20200403105318208480.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON62,images/DX.1.2.840.113564.1722810162.20200326103306090980.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON65,images/DX.1.2.840.113564.1722810162.20200420091034687240.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON71,images/DX.1.2.840.113564.1722810162.20200401095800552100.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON74,images/DX.1.2.840.113564.1722810162.20200415172911278870.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON75,images/DX.1.2.840.113564.1722810162.20200328130557219720.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON79,images/DX.1.2.840.113564.1722810162.20200414235332189450.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON81,images/DX.1.2.840.113564.1722810162.20200327115150971770.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON83,images/CR.1.2.840.113564.192168196.2020032008575844669.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON86,images/DX.1.2.840.113564.1722810162.20200320112920531100.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON90,images/DX.1.2.840.113564.1722810162.20200407110159061830.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON91,images/CR.1.2.840.113564.1722810170.20200319202613984410.1003000225002.png,No finding,AP,research use only (see repository README)
+Normal,actualmed,ANON93,images/DX.1.2.840.113564.1722810162.202004201905117341.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON95,images/DX.1.2.840.113564.1722810162.20200322012248568150.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON96,images/DX.1.2.840.113564.1722810162.202003251249284366.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON97,images/DX.1.2.840.113564.1722810162.20200325133712872360.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON98,images/DX.1.2.840.113564.1722810162.20200418170644187730.1203801020003.png,No finding,PA,research use only (see repository README)
+Normal,actualmed,ANON99,images/CR.1.2.840.113564.192168196.2020032009520943077.1203801020003.png,No finding,PA,research use only (see repository README)
+Abnormal,actualmed,ANON100,images/CR.1.2.840.113564.1722810170.20200321123520296900.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON106,images/CR.1.2.840.113564.1722810170.20200330111806125940.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON110,images/DX.1.2.840.113564.1722810162.202003281918584533.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON112,images/DX.1.2.840.113564.1722810162.20200322024635362290.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON119,images/CR.1.2.840.113564.1722810170.20200327151518468570.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON126,images/CR.1.2.840.113564.1722810170.20200325212815187370.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON135,images/DX.1.2.840.113564.1722810162.20200409104802496810.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON136,images/DX.1.2.840.113564.1722810162.20200405112431725920.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON14,images/DX.1.2.840.113564.1722810162.20200325102716421950.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON153,images/DX.1.2.840.113564.1722810162.202004071718231126.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON157,images/CR.1.2.840.113564.1722810170.20200416105826265860.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON158,images/CR.1.2.840.113564.1722810170.20200407121512859570.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON159,images/DX.1.2.840.113564.1722810162.20200327160432430120.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON169,images/CR.1.2.840.113564.192168196.2020040116564476574.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON170,images/CR.1.2.840.113564.1722810170.20200320011259312440.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON174,images/CR.1.2.840.113564.1722810170.20200321172326140930.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON188,images/DX.1.2.840.113564.1722810162.20200405142816863980.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON189,images/DX.1.2.840.113564.1722810162.20200328170109600900.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON19,images/DX.1.2.840.113564.1722810162.20200325130756972300.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON191,images/CR.1.2.840.113564.1722810170.20200325010134750210.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON195,images/CR.1.2.840.113564.1722810170.20200403175115515840.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON196,images/CR.1.2.840.113564.1722810170.20200318082923328940.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON199,images/DX.1.2.840.113564.1722810162.202003241226081857.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON200,images/CR.1.2.840.113564.1722810170.20200405065153640420.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON201,images/CR.1.2.840.113564.1722810170.20200416020138312830.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON202,images/DX.1.2.840.113564.1722810162.20200331100140006240.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON209,images/DX.1.2.840.113564.1722810162.20200322102521497410.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON218,images/CR.1.2.840.113564.1722810170.20200321002029359840.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON220,images/CR.1.2.840.113564.1722810170.20200320183426328780.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON232,images/CR.1.2.840.113564.1722810170.20200408094743609850.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON234,images/CR.1.2.840.113564.1722810170.20200320072856343530.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON237,images/CR.1.2.840.113564.1722810170.20200321001546031810.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON24,images/CR.1.2.840.113564.1722810170.20200320103403375580.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON240,images/DX.1.2.840.113564.1722810162.202004081114029075.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON25,images/CR.1.2.840.113564.1722810170.20200324165957625920.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON29,images/CR.1.2.840.113564.1722810170.20200403211237078970.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON30,images/DX.1.2.840.113564.1722810162.20200326172257446270.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON38,images/CR.1.2.840.113564.1722810170.20200322160314468140.1003000225002.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON44,images/CR.1.2.840.113564.1722810170.20200402113955515630.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON45,images/CR.1.2.840.113564.1722810170.20200320071047906500.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON46,images/DX.1.2.840.113564.1722810162.20200415105839964650.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON53,images/DX.1.2.840.113564.1722810162.20200409093935803690.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON58,images/CR.1.2.840.113564.1722810170.20200326010813390400.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON60,images/DX.1.2.840.113564.1722810162.20200326123403551130.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON66,images/CR.1.2.840.113564.1722810170.20200320170359875720.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON67,images/DX.1.2.840.113564.1722810162.20200326160333805210.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON68,images/DX.1.2.840.113564.1722810162.20200420135116095500.1203801020003.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON73,images/CR.1.2.840.113564.1722810170.20200329163846250860.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON78,images/CR.1.2.840.113564.1722810170.20200416110930703890.1003000225002.png,COVID-19,AP,research use only (see repository README)
+Abnormal,actualmed,ANON80,images/DX.1.2.840.113564.1722810162.20200325125743092120.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Abnormal,actualmed,ANON96,images/DX.1.2.840.113564.1722810162.20200401122015054240.1203801020003.png,COVID-19,PA,research use only (see repository README)
+Normal,ieee8023,173,images/covid-19-pneumonia-58-prior.jpg,No Finding,PA,CC BY-NC-SA
+Normal,ieee8023,210,images/16745_2_1.PNG,No Finding,PA,CC BY-NC-SA 4.0
+Normal,ieee8023,211,images/16745_3_1.png,No Finding,PA,CC BY-NC-SA 4.0
+Normal,ieee8023,214,images/16745_6_1.png,No Finding,PA,CC BY-NC-SA 4.0
+Normal,ieee8023,251,images/2c35005f.jpg,No Finding,PA,CC BY 3.0
+Normal,ieee8023,253,images/ada8c494.jpg,No Finding,PA,CC BY 3.0
+Normal,ieee8023,313b,images/10.1016-slash-j.hrcr.2020.04.015-fig3-a.png,No Finding,AP,CC BY-NC-ND
+Normal,ieee8023,315,images/1-s2.0-S2214250920300834-gr1_lrg-d.png,No Finding,PA,CC BY-NC-ND
+Normal,ieee8023,325,images/1-s2.0-S1059131120301151-gr2-e.png,No Finding,AP,unspecified
+Normal,ieee8023,351,images/665f7ed5dcf52f235d8abed8cc200c_jumbo.jpeg,No Finding,PA,CC BY-NC-SA
+Normal,ieee8023,38,images/F051E018-DAD1-4506-AD43-BE4CA29E960B.jpeg,No Finding,PA,unspecified
+Normal,ieee8023,394,images/16755_1_1.jpg,No Finding,AP,CC BY-NC-SA 4.0
+Normal,ieee8023,397,images/000001-3.jpg,No Finding,PA,CC BY-NC-SA 4.0
+Normal,ieee8023,402,images/000001-6.jpg,No Finding,AP,CC BY-NC-SA 4.0
+Normal,ieee8023,478,images/02b973e10caa192fd4e6825ad4aeaf_jumbo-10.jpeg,No Finding,AP,CC BY-NC-SA
+Abnormal,ieee8023,10,images/SARS-10.1148rg.242035193-g04mr34g09a-Fig9a-day17.jpeg,Pneumonia/Viral/SARS,AP,unspecified
+Abnormal,ieee8023,103,images/X-ray_of_cyst_in_pneumocystis_pneumonia_1.jpg,Pneumonia/Fungal/Pneumocystis,PA,CC BY
+Abnormal,ieee8023,107,images/pneumocystis-jiroveci-pneumonia-2.png,Pneumonia/Fungal/Pneumocystis,PA,CC BY-NC-SA
+Abnormal,ieee8023,110,images/legionella-pneumonia-1.png,Pneumonia/Bacterial/Legionella,PA,CC BY-NC-SA
+Abnormal,ieee8023,115,images/1.CXRCTThoraximagesofCOVID-19fromSingapore.pdf-003-fig4a.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,12,images/nCoV-radiol.2020200269.fig1-day7.jpeg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,139,images/covid-19-caso-70-1-PA.jpg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,142,images/post-intubuation-pneumomediastium-and-pneumothorax-background-covid-19-pneumonia-day1.jpg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA
+Abnormal,ieee8023,148,images/4ad30bc6-2da0-4f84-bc9b-62acabfd518a.annot.original.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,151,images/radiol.2020201160.fig2a.jpeg,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,155,images/radiol.2020201160.fig3a.jpeg,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,16,images/ryct.2020200028.fig1a.jpeg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,163,images/covid-19-pneumonia-20-pa-on-admission.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,167,images/covid-19-pneumonia-35-1.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,170,images/wong-0000.jpg,Pneumonia/Viral/SARS,PA,unspecified
+Abnormal,ieee8023,174,images/covid-19-pneumonia-mild.JPG,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,178,images/16660_1_1.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,182,images/16672_1_1.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,189,images/6b3bdbc31f65230b8cdcc3cef5f8ba8a-40ac-0.jpg,Pneumonia/Viral/COVID-19,PA,listed as authorized for everyone
+Abnormal,ieee8023,193,images/2-chest-filmc.jpg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,197,images/16673_2_1.jpg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,20,images/covid-19-pneumonia-15-PA.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,206,images/16747_1_1.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,215,images/16745_7_1.png,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,223,images/5f619d7e.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,23,images/covid-19-pneumonia-14-PA.png,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,234,images/f64132c8.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,240,images/f8335316.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,251,images/d009d61f.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,258,images/f6d980a0.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,264,images/48c4542c.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,270,images/90986ce4.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 3.0
+Abnormal,ieee8023,277,images/000005-3.png,Pneumonia/Viral/Varicella,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,282,images/000001.jpg,Pneumonia/Bacterial/Mycoplasma,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,289,images/68_2020_1364_Fig1_HTML-a.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,297,images/11547_2020_1202_Fig1_HTML-a.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,303,images/10.1016-slash-j.anl.2020.04.002-a.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,309,images/1-s2.0-S1931312820301852-gr1_lrg-c.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,311b,images/10.1016-slash-j.crad.2020.04.002-b.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,317,images/10.1016-slash-j.jhin.2020.03.036.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,320,images/1-s2.0-S0085253820303616-gr1_lrg-a.png,Pneumonia/Viral/COVID-19,AP,CC BY-NC-ND 4.0
+Abnormal,ieee8023,324b,images/gr2_lrg-a.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,329,images/12941_2020_358_Fig1_HTML.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 4.0
+Abnormal,ieee8023,331b,images/41182_2020_203_Fig4_HTML.jpg,Pneumonia/Viral/COVID-19,PA,CC BY 4.0
+Abnormal,ieee8023,336,images/article_river_e4d185c06e3511eaa2321d8ab357a1de-c1mn.png,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,341,images/covid-19-caso-82-1-8.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,345,images/covid-19-caso-91-1-12.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,350a,images/08ed451c576ee00935ee178ec85c57_jumbo-1.jpeg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA
+Abnormal,ieee8023,355,images/14d81f378173b86cc53f21d2d67040_jumbo.jpeg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,360a,images/7867b1aa2d1241045c917f07a9e683_jumbo.jpeg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA
+Abnormal,ieee8023,362,images/bb25b35e1cc5cb0984ead37363db0e_jumbo-2.jpeg,Pneumonia,PA,CC BY-NC-SA
+Abnormal,ieee8023,366,images/f410057190635755d60158d1595d67_jumbo-1.jpeg,Pneumonia/Lipoid,PA,CC BY-NC-SA
+Abnormal,ieee8023,371,images/19876b357ac5c998a06d9614b6148a_jumbo.jpeg,Pneumonia,PA,CC BY-NC-SA
+Abnormal,ieee8023,375,images/84da526d0453b9b9e7896631e6b366_jumbo.jpeg,Pneumonia/Viral/Influenza,AP,CC BY-NC-SA
+Abnormal,ieee8023,380,images/3392dc7d262e28423caca517f98c2e_jumbo.jpeg,Pneumonia,AP,CC BY-NC-SA
+Abnormal,ieee8023,39,images/1312A392-67A3-4EBF-9319-810CF6DA5EF6.jpeg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,397,images/000003-1.jpg,Tuberculosis,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,403,images/000001-7.jpg,Pneumonia,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,407,images/000001-11.jpg,Pneumonia,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,411,images/16497_1_1.png,Pneumonia/Fungal/Aspergillosis,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,417,images/000001-4.png,Tuberculosis,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,420,images/000001-20.jpg,Pneumonia/Bacterial/Nocardia,PA,CC BY-NC-SA 4.0
+Abnormal,ieee8023,423b,images/1-s2.0-S0378603X1500248X-gr2a.jpg,Pneumonia/Viral/MERS-CoV,PA,CC BY-NC-ND 4.0
+Abnormal,ieee8023,427b,images/aqaa062i0002-b.png,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,447,images/4cb2f877226f5e02b3064e1e52075f_jumbo.jpeg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA
+Abnormal,ieee8023,450,images/4c8dee3d9fe81567b98ed1b0b2b4c6_jumbo.JPG,Pneumonia/Bacterial/Klebsiella,AP,CC BY-NC-SA
+Abnormal,ieee8023,455,images/180e8fe6c27840acf913013a23328a_jumbo.jpeg,Pneumonia/Bacterial/Mycoplasma,AP Erect,CC BY-NC-SA
+Abnormal,ieee8023,460,images/8f46c8ad3d40a93b4a313f15092e1d_jumbo.jpeg,Pneumonia,PA,CC BY-NC-SA
+Abnormal,ieee8023,464,images/8b7aeaa2063bf9a12ed6b79c173f4e_jumbo.jpeg,Pneumonia/Viral/Influenza,AP,CC BY-NC-SA
+Abnormal,ieee8023,468,images/4e74cbafeab0bfd317a93e1aace6cf_jumbo.jpg,Pneumonia,PA,CC BY-NC-SA
+Abnormal,ieee8023,471,images/16953_1_1.jpg,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,475,images/16858_1_1.png,Pneumonia/Viral/COVID-19,AP,CC BY-NC-SA 4.0
+Abnormal,ieee8023,48,images/2C26F453-AF3B-4517-BB9E-802CF2179543.jpeg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,51,images/E63574A7-4188-4C8D-8D17-9D67A18A1AFA.jpeg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,57,images/all14238-fig-0001-m-b.jpg,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,61,images/ciaa199.pdf-001-b.png,Pneumonia/Viral/COVID-19,PA,unspecified
+Abnormal,ieee8023,67,images/1-s2.0-S1684118220300682-main.pdf-002-a1.png,Pneumonia/Viral/COVID-19,PA,CC BY-NC-ND
+Abnormal,ieee8023,70,images/7D2CF6CE-F529-4470-8356-D33FFAF98600.jpeg,Pneumonia/Viral/COVID-19,AP,unspecified
+Abnormal,ieee8023,76,images/kjr-21-e25-g001-l-a.jpg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,8,images/SARS-10.1148rg.242035193-g04mr34g05x-Fig5-day9.jpeg,Pneumonia/Viral/SARS,PA,unspecified
+Abnormal,ieee8023,87,images/pneumococcal-pneumonia-day0.jpg,Pneumonia/Bacterial/Streptococcus,PA,CC BY-NC-SA
+Abnormal,ieee8023,90,images/chlamydia-pneumonia-PA.png,Pneumonia/Bacterial/Chlamydophila,PA,CC BY-NC-SA
+Abnormal,ieee8023,95,images/58cb9263f16e94305c730685358e4e_jumbo.jpeg,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
+Abnormal,ieee8023,99,images/covid-19-pneumonia-28.png,Pneumonia/Viral/COVID-19,PA,CC BY-NC-SA
