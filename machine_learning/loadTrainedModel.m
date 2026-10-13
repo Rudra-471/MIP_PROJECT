@@ -1,27 +1,26 @@
 function model = loadTrainedModel(modelFile)
 %LOADTRAINEDMODEL Load and validate models/trainedModel.mat.
-%   Throws 'CXR:missingModel' with instructions if the model has not been
-%   trained yet or the file is not a valid model.
+%   model = loadTrainedModel() / loadTrainedModel(modelFile)
+%   Throws CXR:missingModel when no model has been trained yet and
+%   CXR:invalidModel when the file is not a complete model.
 
 if nargin < 1 || isempty(modelFile)
-    projectRoot = fileparts(fileparts(mfilename('fullpath')));
-    modelFile = fullfile(projectRoot, 'models', 'trainedModel.mat');
+    modelFile = defaultModelFile();
 end
 modelFile = char(modelFile);
 if exist(modelFile, 'file') ~= 2
-    error('CXR:missingModel', ...
-        ['No trained model found at %s.\nThe model still needs to be trained: ' ...
-         'prepare the dataset and run "trainModel" (see README.md).'], modelFile);
+    error('CXR:missingModel', ['No trained model found (%s). Train the model on the ' ...
+        'Dataset & Training page (or run runTrainingWorkflow) first.'], modelFile);
 end
 try
     loaded = load(modelFile, 'model');
 catch loadError
-    error('CXR:missingModel', 'Could not load %s: %s', modelFile, loadError.message);
+    error('CXR:invalidModel', 'Could not load %s: %s', modelFile, loadError.message);
 end
-required = {'svm', 'mu', 'sigma', 'plattA', 'plattB', 'featureNames', 'positiveClass', 'cfg'};
-if ~isfield(loaded, 'model') || ~all(isfield(loaded.model, required))
-    error('CXR:missingModel', ...
-        '%s is not a valid model file. Re-run trainModel to create it.', modelFile);
+if ~isfield(loaded, 'model')
+    error('CXR:invalidModel', '%s does not contain a variable named "model".', modelFile);
 end
 model = loaded.model;
+validateModel(model);
+model.file = modelFile;
 end

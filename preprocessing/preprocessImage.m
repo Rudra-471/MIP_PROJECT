@@ -1,58 +1,61 @@
 function pre = preprocessImage(img, cfg)
-%PREPROCESSIMAGE Grayscale conversion, resizing, normalisation, denoising.
-%   pre = preprocessImage(img, cfg) accepts an RGB or grayscale image of any
-%   class (uint8, uint16, double, ...) and any size and returns a struct:
-%     pre.gray      - grayscale image, double in [0,1], resized to cfg.imageSize
-%     pre.normalized- robust percentile-stretched version of pre.gray
-%     pre.denoised  - median-filtered version of pre.normalized (pipeline output)
+%PREPROCESSIMAGE Grayscale conversion, intensity normalisation, resizing and denoising.
+%   pre = preprocessImage(img, cfg) accepts a validated image (see
+%   validateImage): grayscale or RGB, any numeric class, any size.
 %
-%   Why a MEDIAN filter?
-%   Digital radiographs contain impulse-like noise (dead/hot detector pixels,
-%   quantum mottle, compression artefacts). A median filter removes such
-%   outliers while preserving edges - lung borders, ribs and the diaphragm -
-%   much better than a Gaussian filter, which blurs edges uniformly and would
-%   make the later threshold-based lung segmentation less precise. A small
-%   3x3 window is used so fine lung texture (needed for GLCM features) is kept.
+%   Steps
+%     1. Keep an untouched copy of the original pixel data.
+%     2. RGB -> grayscale with rgb2gray (luminance weighting). Grayscale
+%        images are used as they are. Images whose three channels are
+%        identical (common for X-rays saved as RGB) lose no information.
+%     3. Convert to double in [0, 1] with im2double, so uint8, uint16 and
+%        floating-point inputs all share one numeric representation.
+%     4. Resize so that the longest side equals processingSize. The aspect
+%        ratio is preserved; all pixel-based parameters assume this scale.
+%     5. Noise reduction (reduceNoise, median 3x3 by default).
+%
+%   Output struct fields
+%     original   - input pixel data, unchanged
+%     gray       - grayscale double [0,1] at the original resolution
+%     resized    - grayscale double [0,1] at the processing resolution
+%     denoised   - noise-reduced version of resized (input of later steps)
+%     scale      - resize factor applied
+%     noiseMethod- noise-reduction method that was used
 
-if nargin < 2
-    cfg = getConfig();
+if nargin < 2 || isempty(cfg)
+    cfg = appConfig();
 end
 if isempty(img)
     error('CXR:noImage', 'Cannot preprocess an empty image.');
 end
 
-% 1) Grayscale conversion (RGB -> gray with rgb2gray, gray kept as-is)
 if ndims(img) == 3 && size(img, 3) == 3
     gray = rgb2gray(img);
 elseif ismatrix(img)
     gray = img;
 else
-    error('CXR:corruptImage', 'Unsupported image layout (size %s).', mat2str(size(img)));
+    error('CXR:invalidFormat', 'Unsupported image layout %s.', mat2str(size(img)));
 end
-gray = im2double(gray);   % works for uint8, uint16, int16, logical, double
+gray = im2double(gray);
+gray = min(max(gray, 0), 1);   % float inputs outside [0,1] are clipped, not rescaled
 
-% 2) Consistent resolution so features are comparable across images
-gray = imresize(gray, cfg.imageSize, 'bilinear');
-gray = min(max(gray, 0), 1);
-
-% 3) Robust intensity normalisation: stretch between low/high percentiles
-%    so images acquired with different exposure end up in a similar range.
-normalized = stretchToPercentiles(gray, cfg.stretchPercentiles);
-
-% 4) Noise reduction (median filter, see header for the rationale)
-denoised = medfilt2(normalized, cfg.medianFilterSize, 'symmetric');
-
-pre = struct('gray', gray, 'normalized', normalized, 'denoised', denoised);
+[h, w] = size(gray);
+scale = cfg.preprocess.processingSize / max(h, w);
+if abs(scale - 1) > 1e-9
+    targetSize = max(1, round([h w] * scale));
+    resized = imresize(gray, targetSize, 'bilinear');
+    resized = min(max(resized, 0), 1);   % bilinear interpolation can overshoot slightly
+else
+    resized = gray;
 end
 
-function out = stretchToPercentiles(img, pct)
-values = sort(img(:));
-n = numel(values);
-lo = values(max(1, round(pct(1) / 100 * n)));
-hi = values(max(1, round(pct(2) / 100 * n)));
-if hi - lo < eps
-    out = img;              % flat image: nothing to stretch
-    return;
-end
-out = imadjust(img, [lo; hi], [0; 1]);
+denoised = reduceNoise(resized, cfg.preprocess.noiseMethod, cfg);
+
+pre = struct();
+pre.original    = img;
+pre.gray        = gray;
+pre.resized     = resized;
+pre.denoised    = denoised;
+pre.scale       = scale;
+pre.noiseMethod = cfg.preprocess.noiseMethod;
 end

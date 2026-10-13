@@ -1,14 +1,13 @@
 # Octave compatibility shims (TEST USE ONLY)
 
 The project targets **MATLAB** (Image Processing Toolbox + Statistics and
-Machine Learning Toolbox). These files are *not* used when the project runs in
-MATLAB — they are added to the path only by `tests/runOctaveValidation.m` so the
-pipeline can be exercised automatically with GNU Octave on machines without a
-MATLAB licence.
+Machine Learning Toolbox). These files are *never* used in MATLAB: only
+`tests/runAllTests.m` adds this folder to the path, and only under GNU Octave,
+so the pipeline can be tested automatically on machines without a MATLAB
+licence.
 
-They re-implement the following MATLAB functions that are missing (or have a
-different signature) in Octave's `image` package, following MATLAB's documented
-behaviour as closely as practical:
+They re-implement MATLAB functions that are missing from (or differ in) Octave's
+`image` package, following MATLAB's documented behaviour as closely as practical:
 
 | Shim | MATLAB function | Notes |
 |---|---|---|
@@ -19,5 +18,8 @@ behaviour as closely as practical:
 | `graycomatrix.m` | `graycomatrix` | MATLAB name/value API, NaN pixels ignored |
 | `graycoprops.m` | `graycoprops` | Contrast, Correlation, Energy, Homogeneity |
 
-Numerical results in MATLAB will therefore differ slightly from the reference
-results produced with Octave (see `results/README.md`).
+Numerical results in MATLAB will therefore differ slightly from Octave runs.
+Two further Octave limitations are handled in the code and documented there:
+Octave's `fitcsvm` crashes when predicting a single row (`svmPredict.m`) and
+Octave cannot reload a saved classifier object from a `.mat` file (the
+corresponding test is reported as SKIPPED under Octave).

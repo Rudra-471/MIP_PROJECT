@@ -1,22 +1,23 @@
 # Results
 
-Produced by `trainModel` + `demoPipeline` on the 270-image reference dataset
-(see the main README, sections 4 and 12).
+This folder is empty until you train a model. **No evaluation results are
+included in the repository**, because no model has been trained on the NIH
+ChestX-ray14 dataset in this repository yet.
 
-**Environment of these reference files: GNU Octave 8.4.0 + statistics 1.7.0
-with the test-only shims in `tests/octave_compat/`** — not MATLAB. Running
-`trainModel` in MATLAB overwrites the files in this folder with MATLAB results,
-which will differ somewhat (different random split, MATLAB's own CLAHE /
-adaptive threshold / GLCM implementations).
+Each training run (`runTrainingWorkflow` or *Start Training* in the dashboard)
+creates `results/evaluation_<yyyymmdd_HHMMSS>/` with:
 
 | File | Content |
 |---|---|
-| `metrics.txt` / `metrics.csv` | test-set and cross-validation metrics |
-| `confusion_matrix.png` | test-set confusion matrix |
-| `test_predictions.csv` | per-image prediction, P(Abnormal), SVM score |
-| `cv_grid.csv` | hyper-parameter search (5-fold CV balanced accuracy) |
-| `failed_images.csv` | images skipped during feature extraction (none) |
-| `sample_output/` | step-by-step figures and reports for two test images |
-| `source_controlled_actualmed_only/` | same pipeline trained/tested on single-hospital (Actualmed) images only – checks how much of the main result is due to dataset-source differences |
+| `metrics.txt` | human-readable summary: model, split, metrics, confusion matrix, notes |
+| `metrics.csv` | accuracy, precision, sensitivity, specificity, F1, balanced accuracy, TP/TN/FP/FN |
+| `confusion_matrix.csv` | rows = dataset label, columns = prediction |
+| `test_predictions.csv` | every held-out test image: patient, dataset label, prediction, uncalibrated SVM score |
+| `dataset_split.csv` | every selected image with patient ID, view, split and labels |
+| `skipped_images.csv` | images excluded during feature extraction (e.g. failed segmentation) and why |
 
-Educational / research use only — not a medical diagnosis.
+Analysis reports exported from the Image Analysis page are suggested to be
+saved here as well.
+
+All results are for educational and research purposes only and are not a
+medical diagnosis.
