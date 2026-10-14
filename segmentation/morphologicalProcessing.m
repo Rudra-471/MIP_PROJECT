@@ -1,53 +1,63 @@
 function morph = morphologicalProcessing(mask, cfg)
-%MORPHOLOGICALPROCESSING Refine a raw lung mask with morphological operators.
-%   morph = morphologicalProcessing(mask, cfg) returns a struct with every
-%   intermediate stage (useful for visualisation) and the final mask:
+%MORPHOLOGICALPROCESSING Refine a binary lung mask with morphological operators.
+%   morph = morphologicalProcessing(mask, cfg) returns every intermediate
+%   stage (for visualisation) plus pixel counts:
 %
-%     input   - raw mask from segmentLung
-%     opened  - imopen  (disk r1): removes small noise and thin spurs that
-%                         leak out of the lungs (e.g. along the trachea)
-%     cleaned - bwareaopen: removes small unwanted isolated objects
-%     closed  - imclose (disk r2): connects broken pieces of a lung and
-%                         smooths concave notches along the boundary
-%     filled  - imfill 'holes': fills holes left by vessels, ribs or bright
-%                         opacities inside the lung. This matters: dense
-%                         abnormal regions are bright and would otherwise be
-%                         excluded from the lung region of interest
-%     eroded  - imerode (disk r3): peels a thin layer off the boundary
-%     dilated - imdilate(disk r3): grows it back; erosion followed by
-%                         dilation smooths the final contour
-%     final   - at most cfg.morphMaxLungs largest regions (left/right lung)
+%     input   - initial binary mask from segmentLungs
+%     opened  - OPENING (imopen = erosion followed by dilation, disk r_open).
+%               Removes small noise blobs and thin spurs that leak out of the
+%               lungs (e.g. along the trachea) without shrinking large regions.
+%     cleaned - small-object removal (bwareaopen): isolated objects smaller
+%               than minObjectFrac of the image are deleted.
+%     closed  - CLOSING (imclose = dilation followed by erosion, disk r_close).
+%               Bridges small gaps, reconnects broken lung pieces and smooths
+%               concave notches of the boundary.
+%     filled  - HOLE FILLING (imfill 'holes'). Fills enclosed holes caused by
+%               vessels, ribs or bright opacities inside the lung field, so the
+%               ROI covers the whole lung, including dense regions.
+%     eroded  - EROSION (imerode, disk r_erode): peels a thin layer off the
+%               boundary and removes one-pixel protrusions.
+%     dilated - DILATION (imdilate, disk r_dilate): grows the region back.
+%               Erosion followed by dilation of the same size smooths the
+%               final contour (an additional, gentle opening).
+%     output  - final refined mask (= dilated)
+%     counts  - struct with the number of foreground pixels after each stage
+%     isEmpty - true when nothing is left
 %
-%   All structuring elements are created with strel('disk', r, 0) (an exact
-%   disk; N = 0 disables MATLAB's periodic-line approximation).
+%   Structuring elements are exact disks: strel('disk', r, 0).
+%   These operations only make the mask more consistent. They do not detect
+%   disease and do not identify pathological regions.
 
-if nargin < 2
-    cfg = getConfig();
+if nargin < 2 || isempty(cfg)
+    cfg = appConfig();
 end
+p = cfg.morph;
 mask = logical(mask);
-minObjectArea = round(cfg.morphMinObjectFrac * numel(mask));
 
 morph = struct();
-morph.input   = mask;
-morph.opened  = imopen(mask, strel('disk', cfg.morphOpenRadius, 0));
-morph.cleaned = bwareaopen(morph.opened, minObjectArea);
-morph.closed  = imclose(morph.cleaned, strel('disk', cfg.morphCloseRadius, 0));
-morph.filled  = imfill(morph.closed, 'holes');
-morph.eroded  = imerode(morph.filled, strel('disk', cfg.morphErodeRadius, 0));
-morph.dilated = imdilate(morph.eroded, strel('disk', cfg.morphDilateRadius, 0));
-morph.final   = keepLargestRegions(morph.dilated, cfg.morphMaxLungs);
-morph.isEmpty = ~any(morph.final(:));
-end
-
-function out = keepLargestRegions(mask, maxRegions)
-out = false(size(mask));
-cc = bwconncomp(mask, 8);
-if cc.NumObjects == 0
+morph.input = mask;
+if ~any(mask(:))
+    stages = {'opened', 'cleaned', 'closed', 'filled', 'eroded', 'dilated', 'output'};
+    for k = 1:numel(stages)
+        morph.(stages{k}) = mask;
+    end
+    morph.counts = struct('input', 0, 'opened', 0, 'cleaned', 0, 'closed', 0, ...
+                          'filled', 0, 'eroded', 0, 'dilated', 0);
+    morph.isEmpty = true;
     return;
 end
-areas = cellfun(@numel, cc.PixelIdxList);
-[~, order] = sort(areas, 'descend');
-for k = order(1:min(maxRegions, end))
-    out(cc.PixelIdxList{k}) = true;
-end
+
+minObjectArea = max(1, round(p.minObjectFrac * numel(mask)));
+morph.opened  = imopen(mask, strel('disk', p.openRadius, 0));
+morph.cleaned = bwareaopen(morph.opened, minObjectArea);
+morph.closed  = imclose(morph.cleaned, strel('disk', p.closeRadius, 0));
+morph.filled  = imfill(morph.closed, 'holes');
+morph.eroded  = imerode(morph.filled, strel('disk', p.erodeRadius, 0));
+morph.dilated = imdilate(morph.eroded, strel('disk', p.dilateRadius, 0));
+morph.output  = morph.dilated;
+
+morph.counts = struct('input', nnz(mask), 'opened', nnz(morph.opened), ...
+    'cleaned', nnz(morph.cleaned), 'closed', nnz(morph.closed), ...
+    'filled', nnz(morph.filled), 'eroded', nnz(morph.eroded), 'dilated', nnz(morph.dilated));
+morph.isEmpty = ~any(morph.output(:));
 end

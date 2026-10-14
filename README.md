@@ -1,522 +1,627 @@
 # Chest X-Ray Abnormality Detection using MATLAB
 
-> **Medical disclaimer** — This system is intended for educational and research
-> purposes only and does not provide a medical diagnosis. Results should not be
-> used for clinical decision-making.
+**Classical Medical Image Processing and Machine Learning**
 
-An educational medical-image-processing mini-project. A MATLAB application takes
-a real chest X-ray, preprocesses and enhances it, segments the lung fields with
-classical image processing, refines the mask with morphology, extracts intensity
-and GLCM texture features, and classifies the image as **Predicted Normal** or
-**Predicted Abnormal** with a Support Vector Machine (no deep learning).
+> **Medical disclaimer** — This project is intended for educational and research
+> purposes only. Its predictions are not a medical diagnosis and must not be used
+> for clinical decision-making.
+
+A MATLAB desktop application that processes real chest X-rays from the
+**NIH ChestX-ray14** dataset with classical image processing (noise reduction,
+contrast enhancement, gamma correction, lung segmentation, morphology,
+intensity and GLCM texture features) and classifies each image as
+**Normal** or **Abnormal** with a **Support Vector Machine**. No deep learning,
+no pretrained networks, no external AI services.
+
+![Processing stages produced by the project's code](docs/images/pipeline_00027426_000.png)
+*Real output of this project's processing code on NIH image `00027426_000.png`
+(dataset label: No Finding). Generated with GNU Octave and the test shims in
+`tests/octave_compat/`; MATLAB output differs slightly. The teal overlay is the
+approximate segmented lung region, not a lesion map.*
 
 ---
 
 ## Contents
 
-1. [Project objective](#1-project-objective)
-2. [Features](#2-features)
+1. [Project overview](#1-project-overview)
+2. [Objectives](#2-objectives)
 3. [Technologies used](#3-technologies-used)
-4. [Dataset setup](#4-dataset-setup)
-5. [Installation / setup](#5-installation--setup)
-6. [How to train the model](#6-how-to-train-the-model)
-7. [How to run the GUI](#7-how-to-run-the-gui)
-8. [Image-processing pipeline](#8-image-processing-pipeline)
-9. [Morphological operations](#9-morphological-operations)
-10. [Feature extraction](#10-feature-extraction)
-11. [SVM classification](#11-svm-classification)
-12. [Evaluation metrics and results](#12-evaluation-metrics-and-results)
-13. [Limitations](#13-limitations)
-14. [Medical disclaimer](#14-medical-disclaimer)
-15. [Project structure](#15-project-structure)
-16. [Testing](#16-testing)
+4. [System architecture](#4-system-architecture)
+5. [Processing workflow](#5-processing-workflow)
+6. [Dataset source and setup](#6-dataset-source-and-setup)
+7. [Required MATLAB toolboxes](#7-required-matlab-toolboxes)
+8. [Installation / setup](#8-installation--setup)
+9. [How to launch the application](#9-how-to-launch-the-application)
+10. [How to configure the dataset](#10-how-to-configure-the-dataset)
+11. [How to train the model](#11-how-to-train-the-model)
+12. [How to analyse an individual X-ray](#12-how-to-analyse-an-individual-x-ray)
+13. [Morphological operations](#13-morphological-operations)
+14. [Feature-extraction methodology](#14-feature-extraction-methodology)
+15. [SVM classification](#15-svm-classification)
+16. [Patient-wise data splitting](#16-patient-wise-data-splitting)
+17. [Evaluation metrics](#17-evaluation-metrics)
+18. [Troubleshooting](#18-troubleshooting)
+19. [Limitations](#19-limitations)
+20. [Future improvements](#20-future-improvements)
+21. [Medical disclaimer](#21-medical-disclaimer)
+22. [Project structure](#22-project-structure)
+23. [Testing and verification status](#23-testing-and-verification-status)
 
 ---
 
-## 1. Project objective
+## 1. Project overview
 
-Build a complete, modular MATLAB pipeline that demonstrates the core techniques
-of a medical image processing course on real chest radiographs:
+The application is a dark, dashboard-style MATLAB GUI (built programmatically
+with `uifigure` / `uigridlayout`) with six pages:
 
-* image input & validation, grayscale conversion, noise reduction
-* contrast enhancement (imadjust / histeq / CLAHE) and histogram analysis
-* adjustable gamma correction
-* approximate lung-field segmentation (Otsu + adaptive thresholding +
-  connected-component analysis)
-* morphological refinement (erosion, dilation, opening, closing, hole filling)
-* intensity and GLCM texture feature extraction
-* SVM classification with a proper stratified train/test split and honest
-  evaluation (accuracy, precision, sensitivity, specificity, F1, confusion matrix)
-* an interactive GUI
+| Page | What it does |
+|---|---|
+| **Dashboard** | Live status cards: dataset images processed, model training status, selected image, last evaluation metrics. They show "Not available", "Model not trained" or "Evaluation pending" until those things actually exist. The page also lists the processing pipeline of the current image with per-step status. |
+| **Image Analysis** | Four viewers: Original X-Ray, Enhanced X-Ray, Lung Segmentation Mask, Final Processed Image. Step buttons (Preprocess → Enhance Image → Segment Lung → Apply Morphology → Extract Features → Predict), **Run Full Analysis**, an enhancement-method dropdown, a gamma slider, histogram and morphology-stage inspectors, the feature table, prediction and report export. |
+| **Dataset & Training** | Select the NIH folder and CSV, scan and validate, preview the patient-wise subset, set the subset options, **Start Training** with progress and cancel. |
+| **Model Evaluation** | Accuracy, precision, sensitivity, specificity, F1, the number of evaluated samples, the confusion matrix and the validation-based model-selection table. Values appear only after real evaluation on the held-out test set. |
+| **Project Information** | Methods, limitations, disclaimer. |
+| **Settings** | Preprocessing, enhancement, GLCM and morphology parameters. |
 
-The output is always phrased as a **model prediction**, never as a diagnosis.
+A top bar shows the page title, the workflow status, dataset and model chips,
+**Reset** and **Dashboard**. The medical disclaimer is permanently visible in
+the footer.
 
-## 2. Features
+Buttons are disabled until their prerequisites exist (the rules live in one
+function, `pipeline/analysisPrerequisites.m`). Their tooltips say what is missing.
 
-* **GUI** (`main/ChestXrayApp.m`, App Designer structure) with the buttons
-  *Upload X-Ray, Preprocess, Enhance Image, Segment Lung, Apply Morphology,
-  Extract Features, Predict, Reset*, an enhancement-method selector, a gamma
-  slider + numeric field, and five tabs:
-  * **Main View** – Original X-Ray, Enhanced X-Ray, Lung Segmentation, Final
-    Processed Image (lung overlay on the X-ray) + result panel
-    (`Prediction: NORMAL/ABNORMAL`, `Confidence/Score: XX%`)
-  * **Preprocessing & Histograms** – grayscale, denoised, gamma-corrected image,
-    histogram before/after enhancement, table comparing the three enhancement methods
-  * **Morphology** – mask before/after morphology, pixel counts after each operator
-  * **Features** – table of all extracted feature values
-  * **Model Evaluation** – confusion matrix and metrics of the trained model
-* Permanent on-screen medical disclaimer.
-* Training script with automatic dataset discovery (no hard-coded file names),
-  feature caching (`features.mat`), stratified split, cross-validated
-  hyper-parameters, calibrated probabilities and a full evaluation report.
-* `demoPipeline` produces publication-style figures of every step for any image.
-* Graceful, readable error messages for: no image selected, invalid format,
-  corrupted image, missing dataset, missing model, empty segmentation, feature
-  extraction failure, missing toolbox.
+## 2. Objectives
+
+* Apply the core techniques of a medical image processing course to real chest
+  radiographs, and make every intermediate result visible.
+* Build a scientifically defensible classical ML pipeline:
+  * dataset-derived labels with explicit handling of invalid labels;
+  * patient-wise train / validation / test splits;
+  * hyper-parameter selection on validation data only;
+  * a single, final evaluation on a held-out test set.
+* Be honest: no fabricated metrics, no fake confidence values, no lesion
+  "detection" claims, and clear failure states.
 
 ## 3. Technologies used
 
 | Component | Used for |
 |---|---|
-| MATLAB (R2020b or newer recommended) | language/runtime |
-| Image Processing Toolbox | `rgb2gray`, `medfilt2`, `imadjust`, `histeq`, `adapthisteq`, `imgaussfilt`, `graythresh`, `imbinarize`, `adaptthresh`, `bwconncomp`, `regionprops`, `imclearborder`, `strel`, `imerode`, `imdilate`, `imopen`, `imclose`, `imfill`, `bwareaopen`, `graycomatrix`, `graycoprops`, `entropy`, `imhist` |
-| Statistics and Machine Learning Toolbox | `fitcsvm`, `predict`, `compact` |
-| App Designer components | `uifigure`, `uigridlayout`, `uiaxes`, `uibutton`, `uislider`, `uitable`, … |
+| MATLAB R2021a+ | language, runtime, `uifigure` dashboard |
+| Image Processing Toolbox | preprocessing, enhancement, segmentation, morphology, GLCM |
+| Statistics and Machine Learning Toolbox | `fitcsvm`, `predict`, `confusionmat`, `confusionchart` |
+| GNU Octave 8 + image / statistics 1.7 | *optional*, automated tests only (no GUI) |
 
-No deep learning is used. The toolboxes are checked at start-up
-(`utils/checkToolboxes.m`) and a clear message is shown if one is missing.
+## 4. System architecture
 
-## 4. Dataset setup
-
-The images are **not** bundled with the project (≈1 GB, and redistributed under
-the licences of their original sources). The code reads **whatever images are
-placed in** `dataset/Normal/` and `dataset/Abnormal/` (JPG, JPEG, PNG, BMP; any
-size; RGB or grayscale):
+The code is layered. The GUI never processes images itself; it calls the same
+functions that the command-line workflow uses.
 
 ```text
-dataset/
-    Normal/
-        image1.jpg
-        image2.png
-        ...
-    Abnormal/
-        image1.jpg
-        ...
+app/              UI only: page builders + AppController (state, callbacks, rendering)
+pipeline/         single-image step engine shared by GUI, training and prediction
+preprocessing/    grayscale, resize, noise reduction, enhancement, gamma, histograms
+segmentation/     lung segmentation, morphological processing, mask refinement
+features/         intensity + GLCM features (fixed order)
+machine_learning/ NIH metadata, image index, subset + patient split, SVM, evaluation
+utils/            configuration, validation, logging, export, dependency check
+tests/            automated tests (MATLAB and Octave)
 ```
 
-### Option A – reference dataset used for the reported results (recommended)
+`pipeline/runAnalysisStep.m` runs one stage of the pipeline. The GUI step buttons,
+**Run Full Analysis**, dataset feature extraction (`buildFeatureMatrix` →
+`runImagePipeline`) and prediction (`predictImage`) all call it. Training images
+and new images are therefore processed by exactly the same code, and the trained
+model stores the configuration it was trained with.
 
-Two public GitHub repositories of real chest X-rays:
-
-| Repository | Content used |
-|---|---|
-| [agchung/Actualmed-COVID-chestxray-dataset](https://github.com/agchung/Actualmed-COVID-chestxray-dataset) | "No finding" (Normal) and "COVID-19" (Abnormal) frontal X-rays from Actualmed / Universitat Jaume I. Research use only. |
-| [ieee8023/covid-chestxray-dataset](https://github.com/ieee8023/covid-chestxray-dataset) | "No Finding" (Normal) and pneumonia / COVID-19 / SARS / TB / other findings (Abnormal). Per-image licence in its `metadata.csv` (CC BY, CC BY-NC-SA, …). |
-
-`setup/dataset_manifest.csv` lists the exact 270 images used
-(**135 Normal / 135 Abnormal, frontal PA/AP views only, one image per patient**
-so no patient can appear in both the training and the test set). Steps:
-
-```bash
-# 1) clone the two repositories somewhere outside the project
-git clone --depth 1 https://github.com/agchung/Actualmed-COVID-chestxray-dataset actualmed
-git clone --depth 1 https://github.com/ieee8023/covid-chestxray-dataset ieee
-```
-
-```matlab
-% 2) in MATLAB, from the project folder
-setupProject
-prepareDataset('path/to/actualmed', 'path/to/ieee')   % copies 270 images into dataset/
-```
-
-`prepareDataset` copies each image to `dataset/<Class>/<source>_<patientId>_<file>`.
-The selection rules are documented in `setup/make_manifest.py`.
-
-### Option B – any other labelled chest X-ray dataset
-
-For example the Kaggle *Chest X-Ray Images (Pneumonia)* dataset (Kermany et al.):
-copy `NORMAL` images into `dataset/Normal/` and `PNEUMONIA` images into
-`dataset/Abnormal/`. Try to keep the classes roughly balanced and avoid several
-images of the same patient. Then train as below.
-
-## 5. Installation / setup
-
-1. Install MATLAB with the **Image Processing Toolbox** and the **Statistics and
-   Machine Learning Toolbox**.
-2. Clone/download this repository.
-3. In MATLAB, `cd` into the project folder and run `setupProject` (adds the
-   sub-folders to the path using paths relative to the project – nothing is
-   hard-coded).
-4. Prepare the dataset (section 4).
-
-## 6. How to train the model
-
-```matlab
-setupProject
-[model, testMetrics] = trainModel();          % uses dataset/, writes features.mat,
-                                              % models/trainedModel.mat and results/
-trainModel('ForceRecompute', true);           % ignore the features.mat cache
-trainModel('DatasetDir', 'D:\my_cxr_data');   % use another dataset folder
-```
-
-What happens:
-
-1. Every image in `dataset/Normal` and `dataset/Abnormal` goes through the
-   pipeline (resize 512×512 → grayscale → normalisation → median filter →
-   CLAHE → lung segmentation → morphology → features). Unreadable images or
-   failed segmentations are skipped and listed in `results/failed_images.csv`.
-2. Features + labels are stored in **`features.mat`** (a MATLAB `table`
-   `featureTable` plus plain `featureMatrix`/`labels`). The file is re-used
-   automatically while the image list and configuration are unchanged.
-3. Stratified 80/20 train/test split (seed 42).
-4. Z-score standardisation with training-set statistics only.
-5. RBF SVM; `BoxConstraint` and `KernelScale` chosen by stratified 5-fold
-   cross-validation on the training set (balanced accuracy).
-6. Platt scaling fitted on out-of-fold CV scores → calibrated P(Abnormal).
-7. Final model saved to **`models/trainedModel.mat`**; test-set evaluation
-   written to `results/` (`metrics.txt`, `metrics.csv`, `confusion_matrix.png`,
-   `test_predictions.csv`, `cv_grid.csv`).
-
-Then create the explanatory sample figures:
-
-```matlab
-demoPipeline                          % one Normal + one Abnormal TEST image
-demoPipeline('path/to/any_xray.png')  % any image
-```
-
-> **The trained model is not committed to the repository.** A model trained in
-> MATLAB must be produced by running `trainModel` (feature extraction for the
-> 270 images took ≈5 minutes in the Octave test run; most of it is reading the
-> large PNG files). See section 12 for the reference
-> results obtained when this exact pipeline was executed.
-
-## 7. How to run the GUI
-
-```matlab
-startApp            % or: setupProject; ChestXrayApp
-```
-
-1. **Upload X-Ray** – choose a JPG/JPEG/PNG/BMP chest X-ray.
-2. **Preprocess** – grayscale, resize, normalisation, median filter.
-3. Choose an enhancement method → **Enhance Image**; move the **gamma** slider
-   (or type a value 0.2–3.0) to explore gamma correction live.
-4. **Segment Lung** → **Apply Morphology** → **Extract Features** → **Predict**.
-5. **Reset** clears everything.
-
-The result panel shows `Prediction: NORMAL` / `Prediction: ABNORMAL` and
-`Confidence/Score: XX%`. The percentage is the **Platt-calibrated probability
-of the predicted class**, derived from the trained SVM (see section 11) — it is
-only shown when a trained model exists. Without `models/trainedModel.mat` all
-processing steps work, and *Predict* explains that the model must be trained
-first.
-
-> About `.mlapp`: App Designer's `.mlapp` is a binary format that can only be
-> written by the App Designer editor. The GUI is therefore delivered as
-> `main/ChestXrayApp.m`, a class with exactly the structure App Designer
-> generates (`matlab.apps.AppBase`, `createComponents`, callbacks,
-> `startupFcn`). It runs directly and can be extended in the MATLAB editor.
-
-## 8. Image-processing pipeline
+## 5. Processing workflow
 
 ```mermaid
 flowchart TD
-    A[Chest X-ray file<br/>JPG / PNG / BMP] --> B[readXrayImage<br/>validation, indexed/alpha handling]
+    A[Real chest X-ray<br/>PNG / JPG / BMP / TIFF] --> B[Image acquisition<br/>imread + validateImage]
     B --> C[Grayscale conversion<br/>rgb2gray, im2double]
-    C --> D[Resize 512x512 +<br/>percentile intensity normalisation]
+    C --> D[Resize, aspect kept<br/>longest side 512 px]
     D --> E[Noise reduction<br/>medfilt2 3x3]
-    E --> F[Contrast enhancement<br/>CLAHE / histeq / imadjust]
-    F --> G[Histogram analysis<br/>imhist before / after]
-    G --> H[Gamma correction<br/>imadjust ..., gamma]
-    E --> I[Lung segmentation<br/>Gaussian smoothing, Otsu + adaptthresh sweep,<br/>border clearing, bwconncomp + regionprops]
-    I --> J[Morphology<br/>open, area filter, close, fill, erode, dilate]
-    J --> K[Feature extraction<br/>intensity + GLCM + area]
-    F --> K
-    K --> L[Z-score standardisation]
-    L --> M[SVM RBF + Platt scaling]
-    M --> N[Predicted Normal / Predicted Abnormal<br/>+ calibrated probability]
-    N --> O[Visualisation + report<br/>overlay, histograms, features, confusion matrix]
+    E --> F[Histogram analysis<br/>imhist]
+    E --> G[Contrast enhancement<br/>imadjust / histeq / adapthisteq]
+    G --> H[Gamma correction<br/>imadjust gamma]
+    E --> I[Lung segmentation<br/>polarity check, Otsu + adaptthresh,<br/>imclearborder, bwconncomp, regionprops]
+    I --> J[Morphological processing<br/>imopen, bwareaopen, imclose,<br/>imfill, imerode, imdilate]
+    J --> K[Refinement<br/>one region per side, plausibility]
+    H --> L[Feature extraction in lung ROI<br/>6 intensity + 4 GLCM features]
+    K --> L
+    L --> M[Z-score standardisation<br/>training statistics]
+    M --> N[SVM classification<br/>fitcsvm model, predict]
+    N --> O[Prediction + visualisation<br/>Normal / Abnormal, no confidence %]
+    N --> P[Model evaluation<br/>held-out patient-wise test set]
+    K -. failed .-> Q[Segmentation failure reported<br/>no mask invented, no prediction]
 ```
 
-Plain-text version:
+| Stage | Function | What happens and why |
+|---|---|---|
+| Acquisition | `validateImage` | Checks existence, extension, decodability, layout and size. Indexed images become RGB, alpha is dropped, and the original is kept. |
+| Grayscale | `preprocessImage` | `rgb2gray` for RGB, then `im2double`, so uint8, uint16 and double inputs share one numeric representation in [0, 1]. |
+| Resize | `preprocessImage` | The longest side becomes 512 px and the aspect ratio is kept, so pixel-based parameters mean the same thing for every image. |
+| Noise reduction | `reduceNoise` | A 3×3 median filter removes impulse noise (dead/hot pixels, artefacts) while keeping edges. Gaussian or none can be selected in Settings. Small windows keep the lung texture that the GLCM measures. |
+| Enhancement | `enhanceImage` | Exactly one method: contrast stretching (`stretchlim` + `imadjust`, default), histogram equalization (`histeq`) or CLAHE (`adapthisteq`). |
+| Gamma | `applyGammaCorrection` | out = in^γ via `imadjust`; default γ = 1.0, adjustable 0.3–3.0. |
+| Histograms | `computeHistogramData` | 64-bin `imhist` of the original and enhanced image (x = pixel intensity, y = pixel count). |
+| Segmentation | `segmentLungs` | See the next paragraph. |
+| Morphology | `morphologicalProcessing` | See [section 13](#13-morphological-operations). |
+| Refinement | `refineLungMask` | Keeps the largest region on each image half and checks the area. Status is `ok`, `partial` (flagged) or `failed`. |
+| Features | `extractFeatures` | 10 features inside the final lung mask. See [section 14](#14-feature-extraction-methodology). |
 
-```text
-Chest X-Ray Input
- → Grayscale conversion (rgb2gray)            preprocessing/preprocessImage.m
- → Resize 512x512 + intensity normalisation
- → Noise reduction (median 3x3)
- → Contrast enhancement (CLAHE default)       preprocessing/enhanceImage.m
- → Histogram analysis (before / after)        preprocessing/compareEnhancement.m
- → Gamma correction (GUI slider)              preprocessing/gammaCorrection.m
- → Lung region segmentation                   segmentation/segmentLung.m
- → Morphological processing                   segmentation/morphologicalProcessing.m
- → Feature extraction                         features/extractFeatures.m
- → SVM classification                         machine_learning/trainModel.m, classifyFeatures.m
- → Normal / Abnormal model prediction         machine_learning/predictImage.m
- → Visualisation + analysis report            main/ChestXrayApp.m, main/demoPipeline.m
+**Lung segmentation.** No single global threshold works for every radiograph,
+so `segmentLungs` uses these steps:
+
+1. Contrast stretching.
+2. A polarity check: the mediastinum should be brighter than the lateral lung
+   bands; inverted images are complemented.
+3. Gaussian smoothing (σ = 2).
+4. An Otsu threshold (`graythresh`) computed on the central image region.
+5. Adaptive thresholds (`adaptthresh`) at four sensitivities, each with and
+   without the Otsu gate.
+6. Removal of air outside the body (`imclearborder` on an eroded copy).
+7. Connected components (`bwconncomp`, `regionprops`) filtered by area and
+   centroid position, keeping one component per side.
+8. A plausibility score (two regions, total area 8–45 %, left/right symmetry)
+   that picks the best candidate.
+
+If nothing plausible is found, the status is **failed** and the mask stays
+empty. A substitute mask is never generated. Segmentation uses the denoised
+image (not the display enhancement), so changing the enhancement method in the
+GUI does not change the mask.
+
+Morphology on a real NIH image (`00000001_000.png`, dataset label Cardiomegaly):
+
+![Morphology stages](docs/images/morphology_00000001_000.png)
+
+## 6. Dataset source and setup
+
+* **Dataset**: NIH ChestX-ray14 (Wang et al., CVPR 2017). It has 112,120
+  frontal chest X-rays of 30,805 patients, with 14 finding labels mined from
+  radiology reports.
+* **Official source**: <https://nihcc.app.box.com/v/ChestXray-NIHCC>
+* **Metadata**: `Data_Entry_2017_v2020.csv`. Columns used: `Image Index`,
+  `Finding Labels`, `Patient ID`, `View Position`, `Follow-up #`. Columns are
+  found by header name.
+* **Binary labels** (dataset-derived reference labels):
+  * `No Finding` → **Normal**
+  * any of the 14 findings (Atelectasis, Cardiomegaly, Consolidation, Edema,
+    Effusion, Emphysema, Fibrosis, Hernia, Infiltration, Mass, Nodule,
+    Pleural_Thickening, Pneumonia, Pneumothorax) → **Abnormal**
+  * empty labels, unknown label text, `No Finding` combined with a finding,
+    a missing patient ID or a duplicate file name → the row is **excluded and
+    reported**. It is never treated as Normal.
+* **Label quality**: the labels were extracted automatically from radiology
+  reports with NLP. They contain errors and uncertainty; they are reference
+  labels, not clinical ground truth.
+
+The dataset is **not** included and is never downloaded automatically. See
+[`dataset/PLACE_DATASET_HERE.md`](dataset/PLACE_DATASET_HERE.md) for
+step-by-step download and folder instructions. One archive (`images_001`,
+4,999 images of 1,335 patients) is enough for the default 1,000-image
+experiment: on the real metadata, the default settings select 320/320 train,
+80/80 validation and 100/100 test images from 1,000 distinct patients.
+
+`tests/data/nih_samples/` contains two real NIH images (one Normal, one
+Abnormal) for trying the single-image workflow. Two images cannot be used to
+train or evaluate anything.
+
+## 7. Required MATLAB toolboxes
+
+* **Image Processing Toolbox**
+* **Statistics and Machine Learning Toolbox**
+
+`utils/checkDependencies.m` checks both licences and every function the code
+uses. The dashboard shows a clear message naming anything missing. Details are
+in [`requirements.md`](requirements.md).
+
+## 8. Installation / setup
+
+1. Install MATLAB **R2021a or newer** with the two toolboxes above.
+2. Clone or download this repository. No absolute paths are hard-coded.
+3. Download the dataset ([section 6](#6-dataset-source-and-setup)). It can live
+   anywhere.
+
+`main.m` adds all project folders to the path. To use functions from the
+command line, run `setupProject` once per MATLAB session.
+
+## 9. How to launch the application
+
+```matlab
+cd path/to/MIP_PROJECT
+main
 ```
 
-### Preprocessing (`preprocessImage.m`)
+If `models/trainedModel.mat` exists it is loaded automatically, and the image
+analysis panels adopt the processing settings the model was trained with.
 
-* **Grayscale** – RGB images are converted with `rgb2gray`; grayscale, 16-bit,
-  indexed and RGBA images are all handled (`readXrayImage`).
-* **Resize** – every image becomes 512×512 so features are comparable.
-* **Normalisation** – intensities are stretched between the 0.5th and 99.5th
-  percentile, which compensates for different exposures between machines.
-* **Noise reduction: median filter (`medfilt2`, 3×3)** – radiographs contain
-  impulse-like noise (dead/hot detector pixels, quantum mottle, compression
-  artefacts). A median filter removes these outliers while **preserving edges**
-  (lung borders, ribs, diaphragm). A Gaussian filter would blur those edges
-  uniformly and degrade the threshold-based segmentation. The small window keeps
-  the fine lung texture needed for the GLCM features.
+## 10. How to configure the dataset
 
-### Contrast enhancement (`enhanceImage.m`, `compareEnhancement.m`)
+1. Open **Dataset & Training**.
+2. **Browse** → select the dataset folder (the one containing `images_001`, …).
+   `Data_Entry_2017_v2020.csv` is detected automatically when it is in that
+   folder; otherwise use the second **Browse**.
+3. **Scan & Validate Dataset**. This reads and validates the metadata, indexes
+   every image under the folder (recursively, so the archive layout can stay as
+   extracted) and shows:
+   * metadata rows, labelled images found on disk, Normal / Abnormal counts and
+     patients;
+   * the planned patient-wise subset per split (Normal, Abnormal, patients,
+     requested counts);
+   * validation messages: excluded rows and their reasons, images not found,
+     duplicate file names, whether the official split lists were found, and
+     every shortfall between the requested and achievable subset size.
 
-| Method | Behaviour on chest X-rays |
-|---|---|
-| `imadjust` | one global linear stretch – simple, limited gain where contrast is already used |
-| `histeq` | global equalisation – maximal global contrast but over-amplifies noise and washes out the mediastinum |
-| **CLAHE** (`adapthisteq`, default) | equalises 8×8 tiles separately with a clip limit – reveals vessel/rib/lung-field detail in both dark and bright regions without amplifying noise |
+Subset options: requested size (default 1,000), balanced or natural classes,
+view positions (PA only by default, or PA + AP), maximum images per patient
+(default 1), test and validation fractions, random seed, SVM kernels to
+compare, and whether to re-use the feature cache.
 
-The GUI and `demoPipeline` show the histogram before and after enhancement and a
-table with global contrast (std), entropy and mean edge strength of every
-method.
+## 11. How to train the model
 
-### Gamma correction (`gammaCorrection.m`)
+**In the dashboard**: Dataset & Training → **Start Training**. A progress
+dialog shows each stage (metadata, indexing, feature extraction per image,
+model selection, evaluation) and can be cancelled. When training finishes, the
+Model Evaluation page opens with the real test-set results.
 
-`imadjust(img, [], [], gamma)`: γ < 1 brightens dark lung fields, γ > 1
-emphasises bright structures (bone, dense opacities). It is interactive in the
-GUI. For classification the training setting (γ = 1) is always used so features
-stay comparable with the training data.
+**From the command line** (same code):
 
-### Lung segmentation (`segmentLung.m`)
+```matlab
+setupProject();
+r = runTrainingWorkflow('D:\data\NIH-ChestXray14');          % defaults from appConfig
+cfg = appConfig(); cfg.dataset.subsetSize = 300;               % smaller development run
+r = runTrainingWorkflow('D:\data\NIH-ChestXray14', 'Config', cfg);
+r.evaluation.metrics                                           % test-set metrics
+```
 
-No single threshold works for every X-ray, so the method searches over
-several candidates and keeps the most plausible one:
+Outputs:
 
-1. Gaussian smoothing (`imgaussfilt`, σ = 2) – thresholding then reacts to the
-   large dark lung fields, not to rib/vessel texture.
-2. **Global Otsu threshold** (`graythresh` + `imbinarize`) computed on the
-   central part of the image (borders, labels and collimation are excluded).
-3. **Adaptive threshold** (`adaptthresh`, dark foreground, window = ¼ of the
-   image) for 4 sensitivities, each **with and without** the global gate.
-4. Air outside the body touches the image border: it is removed with
-   `imclearborder` applied to an eroded copy (so lungs only thinly connected to
-   the outside air survive), then grown back.
-5. **Connected-component analysis** (`bwconncomp`, `regionprops`): only
-   components with lung-like area and centroid position are kept – the largest
-   on the left and the largest on the right half.
-6. Each candidate is scored (two lungs found, total area 8–45 % of the image,
-   left/right symmetry); the best one is returned. If nothing plausible is found,
-   the mask is empty and the user gets an "Empty segmentation" message instead
-   of a guess.
+* `models/trainedModel.mat` — classifier, kernel and hyper-parameters, feature
+  names and order, standardisation parameters, class labels, the full pipeline
+  configuration, the training configuration, dataset metadata (folder, split
+  source, counts, seed) and the test evaluation.
+* `results/evaluation_<timestamp>/` — `metrics.txt`, `metrics.csv`,
+  `confusion_matrix.csv`, `test_predictions.csv`, `dataset_split.csv`,
+  `skipped_images.csv`.
+* `cache/featureCache.mat` — features already computed with an identical
+  pipeline configuration, re-used by later runs.
 
-## 9. Morphological operations
+Images whose lung segmentation fails are **skipped and listed** in
+`skipped_images.csv`, because lung-ROI features are not defined for them.
 
-`morphologicalProcessing.m`, structuring elements `strel('disk', r, 0)`:
+Rough runtime: about 0.3–0.6 s per image for feature extraction, so 1,000
+images take about 5–10 minutes. SVM model selection takes seconds to a minute.
 
-| Step | Operation | Purpose |
-|---|---|---|
-| 1 | `imopen` (disk 5) | remove small noise and thin spurs leaking along the trachea / costophrenic angles |
-| 2 | `bwareaopen` (0.5 % of image) | remove small unwanted isolated objects |
-| 3 | `imclose` (disk 12) | connect broken pieces of a lung and smooth concave notches |
-| 4 | `imfill(...,'holes')` | fill holes left by vessels, ribs and **bright opacities** – important, otherwise dense abnormal regions would be excluded from the lung ROI |
-| 5 | `imerode` (disk 3) | peel a thin boundary layer |
-| 6 | `imdilate` (disk 3) | grow it back – erosion followed by dilation smooths the contour |
-| 7 | keep 2 largest regions | left and right lung |
+## 12. How to analyse an individual X-ray
 
-The GUI (Morphology tab) and `demoPipeline` (`*_morphology.png`) show the mask
-before and after, and every intermediate stage.
+1. **Image Analysis** → **Upload X-Ray** (PNG, JPG, JPEG, BMP, TIFF; grayscale
+   or RGB). The original image and its size, format and colour type are shown.
+2. Either step through **Preprocess → Enhance Image → Segment Lung → Apply
+   Morphology → Extract Features → Predict**, or click **Run Full Analysis**.
+3. Choose the enhancement method and gamma at any time. The enhanced image and
+   histogram update; the lung mask is kept; features and prediction are cleared
+   and must be recomputed.
+4. **Inspect**: *Histograms* (original vs enhanced) or *Morphology stages*
+   (initial mask, after morphology, final mask, plus pixel counts after every
+   operation).
+5. **Prediction** shows the predicted class, the dataset label (when NIH
+   metadata has been scanned and the file name is in it), the uncalibrated SVM
+   decision value and the model description.
+6. **Export Report** saves a TXT or CSV report with: project name, date and
+   time, file name, preprocessing method, gamma, segmentation status, feature
+   ROI, all feature values, model status, prediction, dataset label and the
+   disclaimer. No patient information is included.
 
-## 10. Feature extraction
+Without a trained model, all processing and feature extraction work, but
+**Predict** is disabled with an explanation. If the current enhancement or
+processing settings differ from the model's training configuration, the image
+is re-processed with the model's configuration for the prediction, and the
+result panel says so.
 
-`extractFeatures.m` computes a 13-element vector **inside the final lung mask**:
+If segmentation fails, features can still be computed on the **whole image**
+for exploration. They are clearly marked as such and are never classified,
+because the model was trained on lung-ROI features.
 
-| Group | Features | Computed on |
-|---|---|---|
-| Intensity | Mean, Std, Variance, Min, Max, Entropy, Skewness, Kurtosis | normalised, denoised image |
-| Texture (GLCM) | Contrast, Correlation, Energy, Homogeneity | CLAHE-enhanced image; `graycomatrix` with 16 grey levels, distance 1, offsets 0°/45°/90°/135° (averaged), symmetric; pixels outside the lungs are set to NaN so they are ignored |
-| Shape | LungAreaRatio | segmented lung area / image area |
+**Command line**:
 
-`features.mat` stores them as a MATLAB table (`featureTable`, one row per image,
-columns = features + `Label` + `File`).
+```matlab
+r = predictImage('tests/data/nih_samples/00027426_000.png');   % uses models/trainedModel.mat
+r.label, r.score, r.features
+```
 
-## 11. SVM classification
+## 13. Morphological operations
 
-* Classifier: `fitcsvm`, RBF kernel, inputs z-scored with training statistics.
-* Hyper-parameters: grid `BoxConstraint ∈ {0.1, 1, 10, 100}` ×
-  `KernelScale ∈ {0.5, 1, 2, 4, 8}·√13`, selected by stratified 5-fold CV
-  balanced accuracy on the **training set only**.
-* Probability: Platt scaling (`fitPlattScaling.m`) fitted on the out-of-fold
-  cross-validation scores, giving P(Abnormal | SVM score). The decision rule is
-  P(Abnormal) ≥ 0.5. The GUI's *Confidence/Score* is the calibrated probability
-  of the predicted class – derived from the trained model, never invented.
-* `predictImage('xray.png')` runs the whole pipeline + classifier for a file.
+All structuring elements are exact disks `strel('disk', r, 0)`. Radii refer to
+the 512 px processing resolution and can be changed in Settings.
 
-## 12. Evaluation metrics and results
+| Order | Operation | MATLAB | Purpose |
+|---|---|---|---|
+| 1 | **Opening** (erosion then dilation), r = 5 | `imopen` | Removes small noise blobs and thin spurs (e.g. along the trachea) without shrinking large regions. |
+| 2 | Small-object removal (< 0.5 % of the image) | `bwareaopen` | Deletes isolated fragments. |
+| 3 | **Closing** (dilation then erosion), r = 12 | `imclose` | Bridges small gaps, reconnects broken lung pieces, smooths concave notches. |
+| 4 | **Hole filling** | `imfill(…, 'holes')` | Fills enclosed holes caused by vessels, ribs or dense regions, so the ROI covers the whole lung field. |
+| 5 | **Erosion**, r = 3 | `imerode` | Peels a thin boundary layer and removes 1-pixel protrusions. |
+| 6 | **Dilation**, r = 3 | `imdilate` | Grows the region back; erosion followed by dilation smooths the contour. |
+| 7 | Refinement | `bwconncomp`, `regionprops` | Keeps the largest region on each side (approximate right and left lung) and checks plausibility. |
 
-Positive class = **Abnormal**.
+Empty input masks are handled safely, and an empty result is reported as a
+failure. These operations only make the mask more consistent. **They do not
+detect disease and do not identify pathological regions.**
+
+## 14. Feature-extraction methodology
+
+`features/extractFeatures.m` takes a grayscale image and an optional ROI mask.
+It returns a 1×10 numeric vector and a table (Feature, Group, Value), always in
+this order:
+
+| # | Feature | Group | Definition |
+|---|---|---|---|
+| 1 | Mean | intensity | average ROI intensity |
+| 2 | Std | intensity | standard deviation (N−1) |
+| 3 | Variance | intensity | Std² |
+| 4 | Min | intensity | darkest ROI pixel |
+| 5 | Max | intensity | brightest ROI pixel |
+| 6 | Entropy | intensity | Shannon entropy of the 256-bin ROI histogram (`entropy`) |
+| 7 | Contrast | GLCM | Σ\|i−j\|² p(i,j) — local intensity variation |
+| 8 | Correlation | GLCM | linear dependency of neighbouring grey levels |
+| 9 | Energy | GLCM | Σ p(i,j)² — uniformity |
+| 10 | Homogeneity | GLCM | Σ p(i,j)/(1+\|i−j\|) — closeness to the diagonal |
+
+* **Input image**: the enhanced, gamma-corrected image (default: contrast
+  stretching, γ = 1). Contrast stretching keeps the intensity ordering, so
+  density information survives. The configuration is stored with the model.
+* **ROI**: the final lung mask. Pixels outside it are set to NaN, and
+  `graycomatrix` ignores every pixel pair containing a NaN.
+* **GLCM parameters**: 32 grey levels; fixed `GrayLimits` [0 1], so the same
+  intensity always maps to the same level; offsets `[0 1; -1 1; -1 0; -1 -1]`
+  (0°, 45°, 90°, 135° at distance 1); symmetric. Each property is averaged
+  over the four directions.
+* **Error handling**: empty or too-small ROIs (< 500 px), mismatched or
+  non-binary masks and NaN/Inf pixels raise explicit errors. A constant region
+  makes the GLCM correlation undefined, and this is **reported**
+  (`CXR:nonFiniteFeature`), never replaced by an arbitrary value.
+* No rule such as "brighter means diseased" is hard-coded anywhere; the SVM
+  learns from labelled data.
+
+## 15. SVM classification
+
+`machine_learning/trainSVM.m`:
+
+1. **Validation of inputs**: matching sizes, finite values, known labels, both
+   classes present, at least 10 training and 3 validation samples per class.
+   Otherwise training stops with an explanation (`CXR:singleClass`,
+   `CXR:insufficientData`, …).
+2. **Standardisation**: z-score with the mean and standard deviation of the
+   training data (`standardizeFeatures`). The same parameters are stored and
+   applied to every new image. Constant features are flagged.
+3. **Class imbalance**: `'Prior','uniform'`. `fitcsvm` normalises the
+   observation weights of each class to its prior, so both classes carry equal
+   total weight. (Inverse-frequency `'Weights'` alone would be undone by
+   `fitcsvm`'s renormalisation to the empirical prior.) The default subset is
+   balanced anyway.
+4. **Explicit kernel and hyper-parameter selection on the validation set**:
+   * linear kernel with BoxConstraint ∈ {0.1, 1, 10, 100};
+   * RBF kernel with BoxConstraint ∈ {0.1, 1, 10, 100} × KernelScale ∈
+     {0.5, 1, 2, 4, 8}·√10.
+
+   Each candidate is trained on the training split and scored by **balanced
+   accuracy on the validation split**. Ties go to the simpler model. The test
+   set is never used here.
+5. **Final model**: refitted with the chosen hyper-parameters on training +
+   validation data; standardisation is recomputed on that data.
+
+Predictions show the **class only**. SVM decision values are uncalibrated
+margins, not probabilities, so no confidence percentage is displayed. The raw
+decision value is shown and labelled as such.
+
+## 16. Patient-wise data splitting
+
+The NIH dataset contains several images per patient (follow-ups). If images of
+one patient were in both the training and the test set, the test score would
+be optimistic. Therefore:
+
+* `splitByPatient` assigns **patients**, not images, to train / validation /
+  test. All images of a patient go to the same subset, and the overlap is
+  verified (`patientOverlap` must be 0, otherwise the run stops).
+* If `train_val_list.txt` and `test_list.txt` (official NIH lists, patient-wise)
+  are present, they define the test set; validation patients are drawn from
+  the training patients.
+* Otherwise a **reproducible random patient-wise split** is made (seed 42 by
+  default; test 20 % and validation 20 % of the remaining patients).
+* Sampling happens **inside** each split, so the subset can never break the
+  patient separation. At most `maxImagesPerPatient` images per patient (default
+  1) reduces redundancy.
+* The requested subset size is a target. The actual per-split class counts are
+  reported, together with every shortfall.
+
+## 17. Evaluation metrics
+
+The **positive class is Abnormal**. Metrics are computed once, on the held-out
+patient-wise test set, by `machine_learning/evaluateModel.m` (`confusionmat`
+with an explicit class order):
 
 | Metric | Formula | Meaning |
 |---|---|---|
-| Accuracy | (TP+TN)/N | overall percentage of correct predictions |
-| Precision | TP/(TP+FP) | percentage of predicted-abnormal cases that are actually abnormal |
-| Recall / Sensitivity | TP/(TP+FN) | ability to correctly identify abnormal cases |
-| Specificity | TN/(TN+FP) | ability to correctly identify normal cases |
-| F1-score | 2·P·R/(P+R) | balance between precision and recall |
-| ROC AUC | rank statistic | probability that an abnormal image scores higher than a normal one |
+| Accuracy | (TP+TN)/(TP+TN+FP+FN) | fraction of correct predictions |
+| Precision | TP/(TP+FP) | of the images predicted Abnormal, the fraction labelled Abnormal |
+| Sensitivity (recall) | TP/(TP+FN) | fraction of Abnormal-labelled images found |
+| Specificity | TN/(TN+FP) | fraction of Normal-labelled images recognised |
+| F1-score | 2·P·R/(P+R) | balance of precision and recall |
+| Balanced accuracy | (Sens+Spec)/2 | used for model selection on validation data |
 
-### Reference results (actually obtained – read the caveats)
+Zero denominators give **undefined** values. These are listed explicitly and
+never shown as 0 % or 100 %. The evaluation page also shows the number of
+evaluated samples and their class distribution.
 
-The full pipeline was executed end-to-end on the 270 real images of the
-reference dataset (section 4). **These runs were performed with GNU Octave 8.4
-+ statistics 1.7.0, not MATLAB** (no MATLAB licence was available in the build
-environment). Octave lacks a few Image Processing Toolbox functions, which were
-replaced by test-only re-implementations (`tests/octave_compat/`, e.g. CLAHE,
-`adaptthresh`, GLCM). Octave's random-number stream also differs from MATLAB's,
-so the train/test split differs. **When you run `trainModel` in MATLAB your
-numbers will differ** – `results/metrics.txt` is then overwritten with the
-MATLAB results. No MATLAB `trainedModel.mat` is shipped: **the model still has
-to be trained in MATLAB** (one command, section 6).
+**No results are reported in this repository**, because no model has been
+trained on NIH ChestX-ray14 here (see
+[section 23](#23-testing-and-verification-status)). Expect modest
+performance: ten hand-crafted features are a weak representation of 14
+heterogeneous findings. A good accuracy value alone would not establish
+clinical usefulness either.
 
-**Main experiment** – 270 images (135 Normal / 135 Abnormal, one per patient),
-stratified 80/20 split → 216 train / 54 test. Selected hyper-parameters:
-BoxConstraint = 100, KernelScale = 1.80. Feature extraction succeeded for 270/270
-images.
+## 18. Troubleshooting
 
-| Metric (Abnormal = positive) | Held-out test set (n = 54) | 5-fold CV on training set (n = 216) |
-|---|---|---|
-| Accuracy | **74.1 %** | 69.4 % |
-| Precision | 72.4 % | 69.8 % |
-| Sensitivity / recall | 77.8 % | 68.5 % |
-| Specificity | 70.4 % | 70.4 % |
-| F1-score | 75.0 % | 69.2 % |
-| ROC AUC | 0.798 | 0.729 |
-
-Test confusion matrix (`results/confusion_matrix.png`):
-
-| | Predicted Normal | Predicted Abnormal |
-|---|---|---|
-| **True Normal** (27) | 19 (TN) | 8 (FP) |
-| **True Abnormal** (27) | 6 (FN) | 21 (TP) |
-
-**Source-controlled check (important).** In the reference dataset most Normal
-images come from one hospital (Actualmed) while most Abnormal images come from
-the literature-based ieee8023 collection, so a classifier can partly learn *which
-source* an image comes from instead of the disease. To measure this, the same
-code was trained/tested on the Actualmed images only (120 Normal / 51 Abnormal,
-same hospital for both classes; `results/source_controlled_actualmed_only/`):
-
-| Metric | Held-out test (n = 34: 24 Normal / 10 Abnormal) |
+| Symptom | Cause / fix |
 |---|---|
-| Accuracy | 73.5 % (mostly from predicting "Normal") |
-| Sensitivity | **20.0 %** (2 / 10) |
-| Specificity | 95.8 % (23 / 24) |
-| Balanced accuracy | 57.9 % (CV on training set: 58.9 %) |
-| ROC AUC | 0.812 (small test set – very uncertain) |
+| "Missing dependencies: …" at start-up | Install or license the Image Processing Toolbox and the Statistics and Machine Learning Toolbox; use MATLAB R2021a+. |
+| "Metadata CSV not found" | Put `Data_Entry_2017_v2020.csv` in the dataset folder or select it with the second Browse button. |
+| "0 labelled images found on disk" | The archives are not extracted under the selected folder, or a different folder was selected. Indexing searches up to 6 folder levels deep. |
+| "Requested … but only … could be selected" | Not enough eligible images or patients for that split and class. Add archives, allow PA + AP, allow more images per patient, or request a smaller subset. |
+| `CXR:singleClass` / `CXR:insufficientData` | A split has no (or too few) images of one class; adjust the subset options. |
+| "Lung segmentation failed" | Unusual exposure, non-frontal view, heavy opacities or external objects. The image is skipped in training; in the GUI only whole-image exploratory features are possible. |
+| Predict is disabled | No trained model, features not extracted yet, or the features are whole-image (segmentation failed). The tooltip says which. |
+| "differ from the model's training configuration" | Your Settings or enhancement choice differs from the model's. Predictions automatically use the model's configuration. |
+| Saved model cannot be loaded | It was trained with a different feature definition (`CXR:invalidModel`). Re-train. |
+| Developer details | Every error is logged with its identifier and location in `logs/app.log`. |
 
-**Interpretation:** hand-crafted global intensity/texture features of an
-approximate lung mask carry only a weak signal for COVID-19/pneumonia. Part of
-the 74 % on the mixed dataset is very likely due to differences between the two
-data sources. With 54 (or 34) test images the uncertainty of every metric is
-also large (roughly ±12 percentage points for the accuracy). This is expected for
-a classical-features educational project and is reported here as measured.
+## 19. Limitations
 
-Sample outputs (`results/sample_output/`, produced by `demoPipeline` on two
-**test-set** images): `*_pipeline.png` (original → grayscale → denoised → CLAHE
-→ gamma → threshold mask → morphology → overlay), `*_histograms.png` (histograms
-and comparison of the enhancement methods), `*_morphology.png` (every
-morphological stage) and `*_report.txt` (feature values + prediction). Note that
-the Abnormal example (`actualmed_ANON100_...`) is **misclassified** by the model
-as *Predicted Normal* (P(Abnormal) = 33.5 %) – one of the 6 false negatives.
+* **Labels**: NIH labels are NLP-mined from reports and are known to contain
+  errors. They are reference labels, not ground truth.
+* **Features**: ten intensity and texture statistics of the whole lung region
+  cannot describe small or localised findings (nodules, pneumothorax, …).
+  Performance is expected to be limited.
+* **Segmentation**: heuristic and threshold-based; **not validated** against
+  annotated lung masks. It can under-segment lungs (e.g. behind an enlarged
+  heart or at the apices), and fails on unusual images.
+* **Classification is not localisation**: the lung overlay shows the
+  approximate segmented lung region, **not** where an abnormality is. No
+  heatmaps or lesion boxes are produced.
+* **Confounders**: devices, hospital processing and patient position can
+  correlate with labels. PA-only selection reduces one such shortcut (AP views
+  are more common in sick patients), but confounding is not controlled.
+* **Binary task**: "Abnormal" merges 14 very different findings.
+* **Not clinically validated**: a "Normal" prediction does not mean the patient
+  is healthy, and an "Abnormal" prediction does not mean a disease is present.
 
-All per-image test predictions are in `results/test_predictions.csv`, the
-hyper-parameter search in `results/cv_grid.csv`.
+## 20. Future improvements
 
-## 13. Limitations
+* Validate lung segmentation against public lung masks (e.g. JSRT, Montgomery
+  County datasets) and report Dice scores.
+* Add shape features of the lung mask and regional (upper / lower zone)
+  texture features; run feature-selection experiments on validation data only.
+* Patient-grouped k-fold cross-validation for more stable model selection.
+* Probability calibration (Platt scaling on held-out data) with a reliability
+  diagram, before any probability is displayed.
+* Per-finding (multi-label) experiments and analysis of failure cases.
 
-* **Not a diagnostic tool.** Educational project; no clinical validation.
-* **Weak, partly source-confounded signal** – see the source-controlled check in
-  section 12: on single-hospital data the sensitivity was only 20 %.
-* **Small dataset** (270 images, 54 test images) → wide confidence intervals;
-  the single hold-out split is one random draw.
-* **Approximate segmentation.** Classical thresholding under-segments lungs that
-  are very dense (large consolidations, effusions) and can miss the lung
-  periphery or retro-cardiac regions; it can fail on lateral views, children,
-  heavily rotated or inverted (MONOCHROME1) images. Failures are reported, not
-  hidden.
-* **Global features only** – means/texture over the whole lung lose the location
-  of focal lesions; there is no lesion detection or localisation.
-* Images are resized to 512×512 without preserving the aspect ratio.
-* "Abnormal" mixes many findings (COVID-19, bacterial/viral pneumonia, TB, …);
-  only a binary Normal/Abnormal decision is made.
-* The GUI (`ChestXrayApp.m`) is written against the documented App Designer API
-  and was syntax-checked, but **it could not be executed in the build
-  environment** (no MATLAB). All functions it calls were executed and tested.
-* Reference numbers were produced with GNU Octave + compatibility shims, not
-  MATLAB (see section 12).
+## 21. Medical disclaimer
 
-## 14. Medical disclaimer
+**This project is intended for educational and research purposes only. Its
+predictions are not a medical diagnosis and must not be used for clinical
+decision-making.** The system is not clinically validated. It must not be used
+to rule disease in or out, and highlighted lung regions are not confirmed
+lesions.
 
-**This system is intended for educational and research purposes only and does
-not provide a medical diagnosis. Results should not be used for clinical
-decision-making.** The application only ever reports a *model prediction*
-("Predicted Normal", "Predicted Abnormal", "candidate abnormality"). It has not
-been validated clinically, was trained on a small public research dataset, and
-must not be used to make or support decisions about any patient.
-
-## 15. Project structure
+## 22. Project structure
 
 ```text
-MIP_PROJECT/                      (project root)
-├── startApp.m                    launch the GUI
-├── setupProject.m                add project folders to the MATLAB path
-├── main/
-│   ├── ChestXrayApp.m            App Designer-style GUI
-│   ├── runPipeline.m             all processing steps for one image
-│   └── demoPipeline.m            sample-output figures + report
-├── preprocessing/
-│   ├── preprocessImage.m         grayscale, resize, normalisation, median filter
-│   ├── enhanceImage.m            imadjust / histeq / CLAHE
-│   ├── compareEnhancement.m      side-by-side comparison + contrast measures
-│   └── gammaCorrection.m
-├── segmentation/
-│   ├── segmentLung.m
-│   └── morphologicalProcessing.m
-├── features/
-│   └── extractFeatures.m
+MIP_PROJECT/
+├── main.m                      start the dashboard
+├── setupProject.m              add project folders to the path
+├── README.md, requirements.md
+├── app/                        GUI (no image processing inside)
+│   ├── launchApp.m             window, sidebar, top bar, footer, pages
+│   ├── AppController.m         state + all callbacks + rendering
+│   ├── buildSidebar.m, buildTopBar.m
+│   ├── buildDashboard.m, buildAnalysisPage.m, buildTrainingPage.m,
+│   ├── buildEvaluationPage.m, buildAboutPage.m, buildSettingsPage.m
+│   ├── uiTheme.m, uiCard.m, uiButton.m, uiText.m, uiPill.m, uiImageAxes.m
+│   └── showImage.m, showEmptyState.m, plotHistograms.m, plotConfusion.m
+├── pipeline/                   step engine shared by GUI, training, prediction
+│   ├── createAnalysis.m, runAnalysisStep.m, runImagePipeline.m
+│   ├── analysisPrerequisites.m, clearAnalysisFrom.m, pipelineConfigsMatch.m
+├── preprocessing/              preprocessImage, reduceNoise, enhanceImage,
+│                               applyGammaCorrection, computeHistogramData
+├── segmentation/               segmentLungs, morphologicalProcessing, refineLungMask
+├── features/                   extractFeatures, extractIntensityFeatures, extractGLCMFeatures
 ├── machine_learning/
-│   ├── trainModel.m              training + evaluation entry point
-│   ├── buildFeatureDataset.m     dataset scan + features.mat
-│   ├── stratifiedSplit.m, stratifiedKFold.m
-│   ├── fitPlattScaling.m         SVM score → probability
-│   ├── classifyFeatures.m, predictImage.m, loadTrainedModel.m
-│   ├── evaluateModel.m           metrics + confusion matrix
-│   ├── plotConfusionMatrix.m
-│   └── saveEvaluationReport.m
-├── utils/                        getConfig (all parameters), readXrayImage,
-│                                 checkToolboxes, createOverlay, isOctaveRuntime
-├── setup/                        prepareDataset.m, dataset_manifest.csv, make_manifest.py
-├── dataset/Normal, dataset/Abnormal   (images not committed)
-├── models/                       trainedModel.mat is created by trainModel
-├── features.mat                  created by trainModel
-├── results/                      reference evaluation + sample outputs
-└── tests/                        runPipelineTests.m, Octave validation + shims
+│   ├── loadDatasetMetadata.m, indexDatasetImages.m, loadOfficialSplit.m
+│   ├── prepareDataset.m, splitByPatient.m, buildFeatureMatrix.m
+│   ├── trainSVM.m, standardizeFeatures.m, svmPredict.m, classifyFeatures.m
+│   ├── predictImage.m, evaluateModel.m, runTrainingWorkflow.m
+│   └── loadTrainedModel.m, validateModel.m, defaultModelFile.m
+├── utils/                      appConfig, checkDependencies, validateImage,
+│                               exportReport, exportEvaluation, saveConfusionFigure,
+│                               createMaskOverlay, logMessage, seededPermutation, ...
+├── models/                     trainedModel.mat (created by training)
+├── dataset/PLACE_DATASET_HERE.md
+├── results/                    evaluation_<timestamp>/ (created by training)
+├── docs/images/                figures used in this README
+├── tests/
+│   ├── runAllTests.m           test runner (MATLAB and Octave)
+│   ├── testPreprocessing.m, testSegmentation.m, testFeatureExtraction.m,
+│   ├── testMetrics.m, testDataset.m, testTraining.m, testGui.m
+│   ├── helpers/                runCase, expectError, synthetic phantoms
+│   ├── data/nih_samples/       two real NIH images (fixtures)
+│   ├── octave_compat/          Octave-only shims for missing IPT functions
+│   └── ui_mock/                Octave-only headless UI stand-ins
+└── legacy/                     previous iteration, not on the path (see legacy/README.md)
 ```
 
-All parameters (image size, filter sizes, CLAHE settings, segmentation and
-morphology radii, GLCM settings, SVM grid, split, seed) live in
-`utils/getConfig.m`.
+## 23. Testing and verification status
 
-## 16. Testing
+Run all tests:
 
-* `tests/runPipelineTests.m` – runs the pipeline on 10 real dataset images and
-  checks input variations (RGB, grayscale, uint16, non-square, PNG/BMP/JPG) and
-  every error path (no image, missing file, invalid format, corrupted file,
-  empty segmentation, missing dataset, missing model, invalid gamma), plus a
-  hand-checked metric example.
-* `tests/runOctaveValidation.m` – runs `trainModel` + `demoPipeline` in GNU
-  Octave (see `tests/octave_compat/README.md`).
+```matlab
+cd tests
+runAllTests                 % everything (about 2 minutes)
+runAllTests('quick')        % skip the end-to-end training workflow
+runAllTests('nihCsv', 'D:\data\NIH\Data_Entry_2017_v2020.csv')   % + real CSV checks
+```
 
-Last run (GNU Octave 8.4, `xvfb-run octave --no-gui tests/runOctaveValidation.m`):
-feature extraction 270/270 images, training and evaluation as reported in
-section 12, `demoPipeline` figures, and **31 / 31 tests passed**.
+The 105 tests cover:
+
+* **Preprocessing**: RGB→grayscale, grayscale, uint16 and double inputs,
+  aspect ratio, median/Gaussian/none filtering, all enhancement methods, gamma,
+  histograms, and invalid inputs (nothing selected, missing, corrupted,
+  unsupported, too small, NaN).
+* **Segmentation**: synthetic phantoms (Dice > 0.8), inverted polarity,
+  segmentation failure, each morphological operation, empty masks, refinement,
+  step order and invalidation, and the real NIH samples.
+* **Feature extraction**: dimensions, name/order consistency, ROI-only
+  computation, value ranges, and invalid mask / empty ROI / constant / NaN
+  images.
+* **Metrics**: hand-computed reference values and undefined (zero-denominator)
+  cases.
+* **Dataset**: missing dataset and CSV, label mapping incl. conflicting, empty,
+  unknown, duplicate and missing-patient rows, nested-folder indexing, official
+  lists, patient-split integrity and reproducibility, subset balance, and
+  shortfall reporting.
+* **SVM and prediction**: training, standardisation re-use, validation-based
+  selection, rejected inputs, model save/load, single-image prediction with the
+  model configuration, report and evaluation export, an end-to-end workflow,
+  and cancellation.
+* **GUI**: navigation, enable/disable rules, all step buttons, enhancement
+  controls, inspectors, full analysis, report export, error and
+  segmentation-failure paths, dataset scan, training, prediction, settings,
+  reset and a layout check.
+
+Synthetic arrays and phantom images are used **only** for software tests; no
+test result is a medical performance figure.
+
+**What has been verified, and how.** These checks were run in a Linux container
+without MATLAB, using GNU Octave 8.4 with the image 2.14 and statistics 1.7.0
+packages:
+
+* **104 tests passed, 0 failed.** One test was skipped: re-loading a saved
+  classifier and predicting with it, because Octave converts saved classifier
+  objects to structs. That test needs MATLAB.
+* Under Octave the GUI tests drive the real page builders and controller, but
+  with headless stand-in components (`tests/ui_mock`).
+* The real `Data_Entry_2017_v2020.csv` was parsed: 112,120 rows, 60,361
+  No Finding, 30,805 patients, which matches the published dataset statistics.
+* Segmentation was checked visually on the 2 NIH samples and 5 further real
+  radiographs.
+
+**Not yet verified**:
+
+* the dashboard's appearance and its MATLAB graphics calls;
+* the reloaded-model test (MATLAB only);
+* a training run on the real NIH images (they were not available in the
+  development environment).
+
+Run `runAllTests` in MATLAB and train on the downloaded dataset to complete
+the verification.
